@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مسار | نظام الولاء</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f5f6fa;margin:0;color:#222}
+.wrap{max-width:430px;margin:auto;padding:22px}
+.card{background:#fff;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 4px 18px #00000010}
+h1{margin:8px 0}.points{font-size:42px;font-weight:700;margin:8px 0}
+input,button{width:100%;padding:13px;border-radius:10px;box-sizing:border-box;margin-top:10px}
+input{border:1px solid #ddd}button{border:0;background:#111;color:white;font-size:16px}
+.small{color:#777;font-size:13px}.reward{display:flex;justify-content:space-between;border:1px solid #eee;padding:12px;border-radius:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="small">مسار • نظام الولاء</div>
+    <h1>محل مسار التجريبي</h1>
+    <div class="small">أدخل رقم هاتفك لمشاهدة نقاطك</div>
+    <input id="phone" placeholder="رقم الهاتف">
+    <button onclick="showPoints()">عرض نقاطي</button>
+  </div>
+
+  <div id="result" class="card" style="display:none">
+    <div class="small">رصيد النقاط</div>
+    <div class="points" id="points">75</div>
+    <div class="small">نقطة</div>
+    <hr>
+    <h3>المكافآت</h3>
+    <div class="reward"><span>خصم 10%</span><b>100 نقطة</b></div>
+    <div class="reward"><span>هدية مجانية</span><b>200 نقطة</b></div>
+  </div>
+</div>
+<script>
+function showPoints(){
+  const p=document.getElementById('phone').value.trim();
+  if(!p){alert('اكتب رقم الهاتف');return;}
+  document.getElementById('result').style.display='block';
+}
+</script>
+</body>
+</html>
