@@ -1,76 +1,528 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>مسار | لوحة صاحب المحل</title>
-<style>
-body{margin:0;background:#f5f6fa;color:#202124;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:20px}
-.top{display:flex;justify-content:space-between;align-items:center}.muted{color:#777;font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 3px 16px #0000000d}
-.num{font-size:30px;font-weight:700;margin-top:8px}input,button{width:100%;padding:12px;border-radius:10px;margin-top:9px;font-size:15px;box-sizing:border-box}
-input{border:1px solid #ddd}button{border:0;background:#111;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.customer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eee;padding:12px 0}.badge{padding:5px 9px;border-radius:20px;background:#eee}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-<div class="top"><div><div class="muted">مسار • لوحة التحكم</div><h1>محل مسار التجريبي</h1></div><div class="badge">تجريبي</div></div>
-<div class="grid">
-<div class="card"><div class="muted">عدد الزبائن</div><div class="num" id="count">0</div></div>
-<div class="card"><div class="muted">إجمالي النقاط</div><div class="num" id="total">0</div></div>
-<div class="card"><div class="muted">المكافأة القادمة</div><div class="num">100</div></div>
-</div>
-<div class="card"><h2>إضافة زبون / تحديث نقاط</h2>
-<input id="name" placeholder="اسم الزبون"><input id="phone" placeholder="رقم الهاتف"><input id="points" type="number" placeholder="عدد النقاط">
-<div class="row"><button onclick="change(1)">إضافة نقاط</button><button onclick="change(-1)">خصم نقاط</button></div></div>
-<div class="card"><h2>الزبائن</h2><div id="list"></div></div>
-<div class="card"><h2>المكافآت</h2><div class="customer"><span>خصم 10%</span><b>100 نقطة</b></div><div class="customer"><span>هدية مجانية</span><b>200 نقطة</b></div></div>
-</div>
-<script>
-const SUPABASE_URL = "https://zobsoaasyuqtqniwfcyd.supabase.co";
-const SUPABASE_KEY ="sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7;
-  const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-  const customers = JSON.parse(localStorage.getItem("masar_customers") || "{}");
-  function render(){let a=Object.entries(customers);count.textContent=a.length;total.textContent=a.reduce((s,[,c])=>s+c.points,0);list.innerHTML=a.length?a.map(([p,c])=>`<div class="customer"><span><b>${c.name}</b><br><small>${p}</small></span><b>${c.points} نقطة</b></div>`).join(''):'<div class="muted">لا يوجد زبائن بعد.</div>'}
-function change(dir){
-  let n = name.value.trim();
-  let p = phone.value.trim();
-  let v = Number(points.value);
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  if(!n || !p || !v){
-    alert("ادخل الاسم والرقم والنقاط");
+  <title>مسار | لوحة صاحب المحل</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body{
+      margin:0;
+      background:#f5f6fa;
+      color:#202124;
+      font-family:Arial,sans-serif;
+    }
+
+    .wrap{
+      max-width:900px;
+      margin:auto;
+      padding:18px;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+    }
+
+    .muted{
+      color:#777;
+      font-size:14px;
+    }
+
+    h1{
+      margin:0;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin:18px 0;
+    }
+
+    .card{
+      background:white;
+      padding:18px;
+      border-radius:12px;
+      border:1px solid #eee;
+      box-sizing:border-box;
+    }
+
+    .num{
+      font-size:30px;
+      font-weight:700;
+      margin-top:8px;
+    }
+
+    input,button{
+      width:100%;
+      box-sizing:border-box;
+      padding:12px;
+      margin:6px 0;
+      border-radius:8px;
+      font-size:16px;
+    }
+
+    input{
+      border:1px solid #ddd;
+    }
+
+    button{
+      border:0;
+      background:#111;
+      color:white;
+      cursor:pointer;
+    }
+
+    button:disabled{
+      opacity:.6;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .customer{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-top:1px solid #eee;
+      padding:12px 0;
+      gap:10px;
+    }
+
+    .customer small{
+      color:#777;
+    }
+
+    @media(max-width:650px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      .row{
+        grid-template-columns:1fr;
+      }
+
+      .top{
+        display:block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <div class="top">
+    <div>
+      <div class="muted">مسار • لوحة التحكم</div>
+      <h1>محل مسار التجريبي</h1>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="muted">عدد الزبائن</div>
+      <div class="num" id="count">0</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">إجمالي النقاط</div>
+      <div class="num" id="total">0</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">المكافأة القادمة</div>
+      <div class="num">100</div>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>إضافة زبون / تحديث نقاط</h2>
+
+    <input
+      id="name"
+      type="text"
+      placeholder="اسم الزبون"
+    >
+
+    <input
+      id="phone"
+      type="tel"
+      placeholder="رقم الهاتف"
+    >
+
+    <input
+      id="points"
+      type="number"
+      min="1"
+      placeholder="عدد النقاط"
+    >
+
+    <div class="row">
+
+      <button id="addBtn" onclick="change(1)">
+        إضافة نقاط
+      </button>
+
+      <button id="removeBtn" onclick="change(-1)">
+        خصم نقاط
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>الزبائن</h2>
+
+    <div id="list"></div>
+
+  </div>
+
+  <div id="message" class="muted"></div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+  "https://zobsoaasyuqtnqiwfcyd.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+const nameInput =
+  document.getElementById("name");
+
+const phoneInput =
+  document.getElementById("phone");
+
+const pointsInput =
+  document.getElementById("points");
+
+const countEl =
+  document.getElementById("count");
+
+const totalEl =
+  document.getElementById("total");
+
+const listEl =
+  document.getElementById("list");
+
+const messageEl =
+  document.getElementById("message");
+
+const addBtn =
+  document.getElementById("addBtn");
+
+const removeBtn =
+  document.getElementById("removeBtn");
+
+
+let customers = [];
+
+
+function showMessage(text){
+  messageEl.textContent = text;
+
+  setTimeout(() => {
+    messageEl.textContent = "";
+  }, 3000);
+}
+
+
+async function loadCustomers(){
+
+  const { data, error } =
+    await supabaseClient
+      .from("customers")
+      .select("*")
+      .order("name");
+
+  if(error){
+
+    console.error(error);
+
+    showMessage(
+      "خطأ في قراءة بيانات الزبائن: " +
+      error.message
+    );
+
     return;
   }
 
-  if(!customers[p]){
-    customers[p] = {
-      name: n,
-      points: 0
-    };
-  }
+  customers = data || [];
 
-  customers[p].name = n;
-
-  customers[p].points = Math.max(
-    0,
-    Number(customers[p].points || 0) + (dir * v)
-  );
-
-  localStorage.setItem(
-    "masar_customers",
-    JSON.stringify(customers)
-  );
-
-  points.value = "";
   render();
 }
-render();
+
+
+function render(){
+
+  countEl.textContent =
+    customers.length;
+
+  totalEl.textContent =
+    customers.reduce(
+      (sum, customer) =>
+        sum + Number(customer.points || 0),
+      0
+    );
+
+  if(customers.length === 0){
+
+    listEl.innerHTML =
+      "<div class='muted'>لا يوجد زبائن بعد</div>";
+
+    return;
+  }
+
+
+  listEl.innerHTML =
+    customers.map(customer => {
+
+      return `
+        <div class="customer">
+
+          <div>
+            <b>${escapeHtml(customer.name || "")}</b>
+            <br>
+            <small>${escapeHtml(customer.phone || "")}</small>
+          </div>
+
+          <b>
+            ${Number(customer.points || 0)} نقطة
+          </b>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+
+function escapeHtml(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+async function change(dir){
+
+  const name =
+    nameInput.value.trim();
+
+  const phone =
+    phoneInput.value.trim();
+
+  const points =
+    Number(pointsInput.value);
+
+
+  if(!name){
+
+    alert("اكتب اسم الزبون");
+
+    nameInput.focus();
+
+    return;
+  }
+
+
+  if(!phone){
+
+    alert("اكتب رقم الهاتف");
+
+    phoneInput.focus();
+
+    return;
+  }
+
+
+  if(
+    !Number.isFinite(points) ||
+    points <= 0
+  ){
+
+    alert("اكتب عدد نقاط صحيح");
+
+    pointsInput.focus();
+
+    return;
+  }
+
+
+  addBtn.disabled = true;
+  removeBtn.disabled = true;
+
+
+  try{
+
+    const { data: existing, error: findError } =
+      await supabaseClient
+        .from("customers")
+        .select("*")
+        .eq("phone", phone)
+        .maybeSingle();
+
+
+    if(findError){
+
+      throw findError;
+    }
+
+
+    let newPoints;
+
+
+    if(existing){
+
+      newPoints =
+        Math.max(
+          0,
+          Number(existing.points || 0)
+          + (dir * points)
+        );
+
+
+      const { data, error } =
+        await supabaseClient
+          .from("customers")
+          .update({
+            name: name,
+            points: newPoints
+          })
+          .eq("phone", phone)
+          .select()
+          .single();
+
+
+      if(error){
+
+        throw error;
+      }
+
+
+      const index =
+        customers.findIndex(
+          c => c.phone === phone
+        );
+
+
+      if(index !== -1){
+
+        customers[index] = data;
+
+      }else{
+
+        customers.push(data);
+
+      }
+
+    }else{
+
+      newPoints =
+        Math.max(
+          0,
+          dir * points
+        );
+
+
+      const { data, error } =
+        await supabaseClient
+          .from("customers")
+          .insert({
+            name: name,
+            phone: phone,
+            points: newPoints
+          })
+          .select()
+          .single();
+
+
+      if(error){
+
+        throw error;
+      }
+
+
+      customers.push(data);
+    }
+
+
+    render();
+
+
+    pointsInput.value = "";
+
+
+    if(dir === 1){
+
+      showMessage(
+        "تمت إضافة " +
+        points +
+        " نقطة بنجاح ✅"
+      );
+
+    }else{
+
+      showMessage(
+        "تم خصم " +
+        points +
+        " نقطة بنجاح ✅"
+      );
+
+    }
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "لم تتم العملية:\n" +
+      error.message
+    );
+
+  }finally{
+
+    addBtn.disabled = false;
+    removeBtn.disabled = false;
+
+  }
+
+}
+
+
+loadCustomers();
+
 </script>
+
 </body>
 </html>
