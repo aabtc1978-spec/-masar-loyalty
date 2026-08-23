@@ -6,19 +6,12 @@
 <title>مسار | لوحة صاحب المحل</title>
 
 <style>
-body{margin:0;background:#f5f6fa;color:#202124;font-family:Arial,sans-serif}
-.wrap{max-width:900px;margin:auto;padding:20px}
-.top{display:flex;justify-content:space-between;align-items:center}
-.muted{color:#777;font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
-.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 3px 16px #0000000d}
-.num{font-size:30px;font-weight:700;margin-top:8px}
-input,button{width:100%;padding:12px;border-radius:10px;margin-top:9px;font-size:15px;box-sizing:border-box}
-input{border:1px solid #ddd}
-button{border:0;background:#111;color:#fff}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.customer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eee;padding:12px 0}
-.badge{padding:5px 9px;border-radius:20px;background:#eee}
+body{margin:0;background:#f5f6fa;color:#202124;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:20px}
+.top{display:flex;justify-content:space-between;align-items:center}.muted{color:#777;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 3px 16px #0000000d}
+.num{font-size:30px;font-weight:700;margin-top:8px}input,button{width:100%;padding:12px;border-radius:10px;margin-top:9px;font-size:15px;box-sizing:border-box}
+input{border:1px solid #ddd}button{border:0;background:#111;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.customer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eee;padding:12px 0}.badge{padding:5px 9px;border-radius:20px;background:#eee}
 
 .search-result{
 display:flex;
@@ -26,25 +19,14 @@ justify-content:space-between;
 align-items:center;
 border-top:1px solid #eee;
 padding:12px 0;
-cursor:pointer;
+cursor:pointer
 }
 
-.search-result:hover{
-background:#f7f7f7;
+.search-result:first-child{
+border-top:0
 }
 
-.search-box{
-margin-bottom:8px;
-}
-
-#searchResults:empty{
-display:none;
-}
-
-@media(max-width:650px){
-.grid{grid-template-columns:1fr}
-.row{grid-template-columns:1fr}
-}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -59,7 +41,6 @@ display:none;
 </div>
 <div class="badge">تجريبي</div>
 </div>
-
 
 <div class="grid">
 
@@ -81,15 +62,14 @@ display:none;
 </div>
 
 
-<!-- البحث -->
+<!-- البحث عن زبون سابق -->
 
 <div class="card">
 
-<h2>البحث عن زبون سابق</h2>
+<h2>🔎 البحث عن زبون سابق</h2>
 
 <input
 id="searchName"
-class="search-box"
 placeholder="اكتب اسم الزبون للبحث"
 oninput="searchCustomers()"
 >
@@ -99,7 +79,7 @@ oninput="searchCustomers()"
 </div>
 
 
-<!-- إضافة وخصم -->
+<!-- إضافة وخصم النقاط -->
 
 <div class="card">
 
@@ -170,15 +150,15 @@ placeholder="عدد النقاط"
 
 <script>
 
+/* نفس التخزين القديم بدون تغيير */
+
 let customers =
 JSON.parse(
 localStorage.getItem('masar_customers') || '{}'
 );
 
 
-/* =========================
-   عرض الزبائن
-========================= */
+/* عرض الزبائن */
 
 function render(){
 
@@ -190,47 +170,46 @@ a.length;
 
 total.textContent =
 a.reduce(
-(s,[,c]) => s + Number(c.points || 0),
+(s,[,c]) => s + c.points,
 0
 );
 
 list.innerHTML =
 a.length
-
-? a.map(([p,c]) => `
+?
+a.map(([p,c])=>`
 
 <div class="customer">
 
 <span>
 
 <b>
-${escapeHtml(c.name)}
+${c.name}
 </b>
 
 <br>
 
 <small>
-${escapeHtml(p)}
+${p}
 </small>
 
 </span>
 
 <b>
-${Number(c.points || 0)} نقطة
+${c.points} نقطة
 </b>
 
 </div>
 
 `).join('')
 
-: '<div class="muted">لا يوجد زبائن بعد.</div>';
+:
+'<div class="muted">لا يوجد زبائن بعد.</div>';
 
 }
 
 
-/* =========================
-   البحث
-========================= */
+/* البحث عن الزبون */
 
 function searchCustomers(){
 
@@ -242,7 +221,7 @@ searchName.value
 
 if(!q){
 
-searchResults.innerHTML = '';
+searchResults.innerHTML='';
 
 return;
 
@@ -252,11 +231,9 @@ return;
 let matches =
 Object.entries(customers)
 .filter(([p,c]) =>
-
 String(c.name || '')
 .toLowerCase()
 .includes(q)
-
 );
 
 
@@ -271,29 +248,29 @@ return;
 
 
 searchResults.innerHTML =
-matches.map(([p,c]) => `
+matches.map(([p,c])=>`
 
 <div
 class="search-result"
-onclick="selectCustomer('${escapeJs(p)}')"
+onclick="selectCustomer('${p.replace(/'/g,"\\'")}')"
 >
 
 <span>
 
 <b>
-${escapeHtml(c.name)}
+${c.name}
 </b>
 
 <br>
 
 <small>
-${escapeHtml(p)}
+${p}
 </small>
 
 </span>
 
 <b>
-${Number(c.points || 0)} نقطة
+${c.points} نقطة
 </b>
 
 </div>
@@ -303,9 +280,7 @@ ${Number(c.points || 0)} نقطة
 }
 
 
-/* =========================
-   اختيار الزبون
-========================= */
+/* اختيار الزبون */
 
 function selectCustomer(phone){
 
@@ -317,27 +292,24 @@ return;
 
 
 name.value =
-c.name || '';
+c.name;
 
 document.getElementById('phone')
 .value =
 phone;
 
 
-searchName.value = '';
+searchName.value='';
 
-searchResults.innerHTML = '';
+searchResults.innerHTML='';
 
 
-document.getElementById('points')
-.focus();
+points.focus();
 
 }
 
 
-/* =========================
-   إضافة / خصم
-========================= */
+/* إضافة أو خصم النقاط */
 
 function change(dir){
 
@@ -362,17 +334,11 @@ return;
 }
 
 
-if(!customers[p]){
-
-customers[p] = {
-
+if(!customers[p])
+customers[p]={
 name:n,
-
 points:0
-
 };
-
-}
 
 
 customers[p].name =
@@ -382,9 +348,7 @@ n;
 customers[p].points =
 Math.max(
 0,
-Number(customers[p].points || 0)
-+
-dir * v
+customers[p].points + dir*v
 );
 
 
@@ -394,52 +358,14 @@ JSON.stringify(customers)
 );
 
 
-points.value = '';
+points.value='';
 
 render();
 
 }
 
 
-/* =========================
-   حماية النص
-========================= */
-
-function escapeHtml(value){
-
-return String(value)
-
-.replaceAll('&','&amp;')
-
-.replaceAll('<','&lt;')
-
-.replaceAll('>','&gt;')
-
-.replaceAll('"','&quot;')
-
-.replaceAll("'","&#039;");
-
-}
-
-
-/* =========================
-   حماية رقم الهاتف
-========================= */
-
-function escapeJs(value){
-
-return String(value)
-
-.replaceAll('\\','\\\\')
-
-.replaceAll("'","\\'");
-
-}
-
-
-/* =========================
-   تشغيل
-========================= */
+/* تشغيل الصفحة */
 
 render();
 
