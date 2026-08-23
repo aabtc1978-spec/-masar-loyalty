@@ -7,113 +7,88 @@
 
 <style>
 body{
-  margin:0;
-  background:#f5f6fa;
-  color:#202124;
-  font-family:Arial,sans-serif;
+margin:0;
+background:#f5f6fa;
+color:#202124;
+font-family:Arial,sans-serif
 }
-
 .wrap{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
+max-width:1000px;
+margin:auto;
+padding:20px
 }
-
 .top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px
 }
-
 h1{margin:0}
-
 .grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin-bottom:20px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+margin-bottom:20px
 }
-
 .card{
-  background:#fff;
-  border-radius:14px;
-  padding:20px;
-  box-shadow:0 2px 10px #00000012;
-  margin-bottom:16px;
+background:#fff;
+border-radius:14px;
+padding:20px;
+box-shadow:0 2px 10px #00000012;
+margin-bottom:16px
 }
-
 .num{
-  font-size:30px;
-  font-weight:bold;
-  margin-top:8px;
+font-size:30px;
+font-weight:bold;
+margin-top:8px
 }
-
-.muted{
-  color:#777;
-}
-
+.muted{color:#777}
 input,button{
-  width:100%;
-  box-sizing:border-box;
-  padding:14px;
-  margin-top:10px;
-  border-radius:8px;
-  font-size:16px;
+width:100%;
+box-sizing:border-box;
+padding:14px;
+margin-top:10px;
+border-radius:8px;
+font-size:16px
 }
-
-input{
-  border:1px solid #ddd;
-}
-
+input{border:1px solid #ddd}
 button{
-  border:0;
-  background:#222;
-  color:#fff;
-  cursor:pointer;
+border:0;
+background:#222;
+color:#fff;
+cursor:pointer
 }
-
 .row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px
 }
-
 .customer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-top:1px solid #eee;
-  padding:12px 0;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-top:1px solid #eee;
+padding:12px 0
 }
-
 .points{
-  font-weight:bold;
-  font-size:20px;
+font-weight:bold;
+font-size:20px
 }
-
 #status{
-  margin-top:12px;
-  font-weight:bold;
+margin-top:12px;
+font-weight:bold
 }
-
 .history-item{
-  border-top:1px solid #eee;
-  padding:12px 0;
+border-top:1px solid #eee;
+padding:12px 0
 }
+.add{font-weight:bold}
+.remove{font-weight:bold}
 
 @media(max-width:650px){
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .row{
-    grid-template-columns:1fr;
-  }
-
-  .top{
-    display:block;
-  }
+.grid{grid-template-columns:1fr}
+.row{grid-template-columns:1fr}
+.top{display:block}
 }
 </style>
 </head>
@@ -122,90 +97,75 @@ button{
 
 <div class="wrap">
 
-  <div class="top">
-    <div class="muted">مسار • لوحة التحكم</div>
-    <h1>مسار التجريبي</h1>
-  </div>
+<div class="top">
+<div class="muted">مسار • لوحة التحكم</div>
+<h1>مسار التجريبي</h1>
+</div>
 
-  <div class="grid">
+<div class="grid">
 
-    <div class="card">
-      <div class="muted">عدد الزبائن</div>
-      <div class="num" id="count">0</div>
-    </div>
+<div class="card">
+<div class="muted">عدد الزبائن</div>
+<div class="num" id="count">0</div>
+</div>
 
-    <div class="card">
-      <div class="muted">إجمالي النقاط</div>
-      <div class="num" id="total">0</div>
-    </div>
+<div class="card">
+<div class="muted">إجمالي النقاط</div>
+<div class="num" id="total">0</div>
+</div>
 
-    <div class="card">
-      <div class="muted">المكافأة القادمة</div>
-      <div class="num">100</div>
-    </div>
+<div class="card">
+<div class="muted">المكافأة القادمة</div>
+<div class="num">100</div>
+</div>
 
-  </div>
+</div>
 
+<div class="card">
 
-  <div class="card">
+<h2>إضافة زبون / تحديث نقاط</h2>
 
-    <h2>إضافة زبون / تحديث نقاط</h2>
+<input id="name" placeholder="اسم الزبون">
 
-    <input
-      id="name"
-      placeholder="اسم الزبون"
-    >
+<input id="phone" placeholder="رقم الهاتف" inputmode="tel">
 
-    <input
-      id="phone"
-      placeholder="رقم الهاتف"
-      inputmode="tel"
-    >
+<input id="points" type="number" min="1" placeholder="عدد النقاط">
 
-    <input
-      id="points"
-      type="number"
-      min="1"
-      placeholder="عدد النقاط"
-    >
+<div class="row">
 
-    <div class="row">
+<button onclick="changePoints(1)">
+إضافة نقاط
+</button>
 
-      <button onclick="changePoints(1)">
-        إضافة نقاط
-      </button>
+<button onclick="changePoints(-1)">
+خصم نقاط
+</button>
 
-      <button onclick="changePoints(-1)">
-        خصم نقاط
-      </button>
+</div>
 
-    </div>
+<div id="status"></div>
 
-    <div id="status"></div>
+</div>
 
-  </div>
+<div class="card">
 
+<h2>الزبائن</h2>
 
-  <div class="card">
+<div id="list">
+جاري التحميل...
+</div>
 
-    <h2>الزبائن</h2>
+</div>
 
-    <div id="list">
-      جاري التحميل...
-    </div>
+<div class="card">
 
-  </div>
+<h2>آخر عمليات النقاط</h2>
 
+<div id="history">
+جاري التحميل...
+</div>
 
-  <div class="card">
-
-    <h2>آخر عمليات النقاط</h2>
-
-    <div id="history">
-      جاري التحميل...
-    </div>
-
-  </div>
+</div>
 
 </div>
 
@@ -222,61 +182,46 @@ const SHOP_ID = 1;
 
 
 /* =========================
-   Supabase Request
+   Supabase
 ========================= */
 
 async function supabaseRequest(path, options = {}){
 
-  const response =
-    await fetch(
-      SUPABASE_URL + "/rest/v1/" + path,
-      {
-        ...options,
+const response = await fetch(
+SUPABASE_URL + "/rest/v1/" + path,
+{
+...options,
+headers:{
+"apikey":SUPABASE_KEY,
+"Authorization":"Bearer " + SUPABASE_KEY,
+"Content-Type":"application/json",
+"Accept":"application/json",
+...(options.headers || {})
+}
+}
+);
 
-        headers:{
-          "apikey":SUPABASE_KEY,
-          "Authorization":
-            "Bearer " + SUPABASE_KEY,
-          "Content-Type":"application/json",
-          "Accept":"application/json",
+const text = await response.text();
 
-          ...(options.headers || {})
-        }
-      }
-    );
+let data = null;
 
+try{
+data = text ? JSON.parse(text) : null;
+}catch{
+data = text;
+}
 
-  const text =
-    await response.text();
+if(!response.ok){
 
+throw new Error(
+typeof data === "string"
+? data
+: JSON.stringify(data)
+);
 
-  let data = null;
+}
 
-
-  try{
-
-    data =
-      text ? JSON.parse(text) : null;
-
-  }catch{
-
-    data = text;
-
-  }
-
-
-  if(!response.ok){
-
-    throw new Error(
-      typeof data === "string"
-        ? data
-        : JSON.stringify(data)
-    );
-
-  }
-
-
-  return data;
+return data;
 
 }
 
@@ -287,92 +232,74 @@ async function supabaseRequest(path, options = {}){
 
 async function render(){
 
-  const list =
-    document.getElementById("list");
+const list =
+document.getElementById("list");
 
+try{
 
-  try{
+const customers =
+await supabaseRequest(
+"customers" +
+"?select=id,name,phone,points,created_at" +
+"&shop_id=eq." + SHOP_ID +
+"&order=id.desc"
+);
 
-    const customers =
-      await supabaseRequest(
-        "customers" +
-        "?select=id,name,phone,points,created_at" +
-        "&shop_id=eq." + SHOP_ID +
-        "&order=id.desc"
-      );
+document.getElementById("count")
+.textContent = customers.length;
 
+let total = 0;
 
-    document.getElementById("count")
-      .textContent =
-      customers.length;
+customers.forEach(customer=>{
+total += Number(customer.points || 0);
+});
 
+document.getElementById("total")
+.textContent = total;
 
-    let total = 0;
+if(!customers.length){
 
+list.innerHTML =
+"لا يوجد زبائن حالياً";
 
-    customers.forEach(customer => {
+return;
 
-      total +=
-        Number(customer.points || 0);
+}
 
-    });
+list.innerHTML =
+customers.map(customer=>`
 
+<div class="customer">
 
-    document.getElementById("total")
-      .textContent = total;
+<div>
 
+<strong>
+${escapeHtml(customer.name || "")}
+</strong>
 
-    if(!customers.length){
+<div class="muted">
+${escapeHtml(customer.phone || "")}
+</div>
 
-      list.innerHTML =
-        "لا يوجد زبائن حالياً";
+</div>
 
-      return;
+<div class="points">
+${Number(customer.points || 0)} نقطة
+</div>
 
-    }
+</div>
 
+`).join("");
 
-    list.innerHTML =
-      customers.map(customer => `
+}catch(error){
 
-        <div class="customer">
+console.error(error);
 
-          <div>
+list.innerHTML =
+"<b>تعذر تحميل الزبائن</b><br>" +
+escapeHtml(error.message);
 
-            <strong>
-              ${escapeHtml(
-                customer.name || ""
-              )}
-            </strong>
-
-            <div class="muted">
-              ${escapeHtml(
-                customer.phone || ""
-              )}
-            </div>
-
-          </div>
-
-          <div class="points">
-            ${Number(
-              customer.points || 0
-            )} نقطة
-          </div>
-
-        </div>
-
-      `).join("");
-
-
-  }catch(error){
-
-    console.error(error);
-
-    list.innerHTML =
-      "<b>تعذر تحميل الزبائن</b><br>" +
-      escapeHtml(error.message);
-
-  }
+}
 
 }
 
@@ -383,89 +310,80 @@ async function render(){
 
 async function loadHistory(){
 
-  const history =
-    document.getElementById("history");
+const history =
+document.getElementById("history");
 
+try{
 
-  try{
+const rows =
+await supabaseRequest(
+"points_history" +
+"?select=id,created_at,customer_id,customer_name,customer_phone,points,action" +
+"&shop_id=eq." + SHOP_ID +
+"&order=id.desc" +
+"&limit=30"
+);
 
-    const rows =
-      await supabaseRequest(
-        "points_history" +
-        "?select=id,created_at,customer_id,customer_name,customer_phone,points,action" +
-        "&shop_id=eq." + SHOP_ID +
-        "&order=id.desc" +
-        "&limit=20"
-      );
+if(!rows.length){
 
+history.innerHTML =
+"لا توجد عمليات بعد";
 
-    if(!rows.length){
+return;
 
-      history.innerHTML =
-        "لا توجد عمليات بعد";
+}
 
-      return;
+history.innerHTML =
+rows.map(row=>{
 
-    }
+const isAdd =
+row.action === "add";
 
+const text =
+isAdd ? "إضافة" : "خصم";
 
-    history.innerHTML =
-      rows.map(row => {
+const sign =
+isAdd ? "+" : "-";
 
-        const actionText =
-          row.action === "add"
-            ? "إضافة"
-            : "خصم";
+return `
 
+<div class="history-item">
 
-        const sign =
-          row.action === "add"
-            ? "+"
-            : "-";
+<strong>
+${escapeHtml(
+row.customer_name || "بدون اسم"
+)}
+</strong>
 
+<div class="muted">
+${escapeHtml(
+row.customer_phone || "بدون رقم"
+)}
+</div>
 
-        return `
+<div>
+${text}:
+<b>
+${sign}${Number(row.points || 0)}
+</b>
+نقطة
+</div>
 
-          <div class="history-item">
+</div>
 
-            <strong>
-              ${escapeHtml(
-                row.customer_name || "بدون اسم"
-              )}
-            </strong>
+`;
 
-            <div class="muted">
-              ${escapeHtml(
-                row.customer_phone || "بدون رقم"
-              )}
-            </div>
+}).join("");
 
-            <div>
-              ${actionText}:
-              <b>
-                ${sign}${Number(
-                  row.points || 0
-                )}
-              </b>
-              نقطة
-            </div>
+}catch(error){
 
-          </div>
+console.error(error);
 
-        `;
+history.innerHTML =
+"<b>تعذر تحميل سجل العمليات</b><br>" +
+escapeHtml(error.message);
 
-      }).join("");
-
-
-  }catch(error){
-
-    console.error(error);
-
-    history.innerHTML =
-      "<b>تعذر تحميل سجل العمليات</b><br>" +
-      escapeHtml(error.message);
-
-  }
+}
 
 }
 
@@ -476,251 +394,224 @@ async function loadHistory(){
 
 async function changePoints(direction){
 
-  const nameInput =
-    document.getElementById("name");
+const name =
+document.getElementById("name")
+.value.trim();
 
-  const phoneInput =
-    document.getElementById("phone");
+const phone =
+document.getElementById("phone")
+.value.trim();
 
-  const pointsInput =
-    document.getElementById("points");
+const value =
+Number(
+document.getElementById("points")
+.value
+);
 
-  const status =
-    document.getElementById("status");
+const status =
+document.getElementById("status");
 
 
-  const name =
-    nameInput.value.trim();
+if(!name || !phone || !value || value <= 0){
 
-  const phone =
-    phoneInput.value.trim();
+status.textContent =
+"اكتب الاسم ورقم الهاتف وعدد النقاط";
 
-  const value =
-    Number(pointsInput.value);
+return;
 
+}
 
-  if(
-    !name ||
-    !phone ||
-    !value ||
-    value <= 0
-  ){
+status.textContent =
+"جاري الحفظ...";
 
-    status.textContent =
-      "اكتب الاسم ورقم الهاتف وعدد النقاط";
 
-    return;
+try{
 
-  }
+/* =========================
+   البحث عن الزبون
+========================= */
 
+const found =
+await supabaseRequest(
+"customers" +
+"?select=id,name,phone,points" +
+"&shop_id=eq." + SHOP_ID +
+"&phone=eq." +
+encodeURIComponent(phone) +
+"&limit=1"
+);
 
-  status.textContent =
-    "جاري الحفظ...";
+let customer;
 
 
-  try{
+/* =========================
+   زبون موجود
+========================= */
 
-    /* =========================
-       البحث عن الزبون
-    ========================= */
+if(found.length > 0){
 
-    const found =
-      await supabaseRequest(
-        "customers" +
-        "?select=id,name,phone,points" +
-        "&shop_id=eq." + SHOP_ID +
-        "&phone=eq." +
-        encodeURIComponent(phone) +
-        "&limit=1"
-      );
+customer = found[0];
 
+const oldPoints =
+Number(customer.points || 0);
 
-    let customer;
+const newPoints =
+Math.max(
+0,
+oldPoints + (direction * value)
+);
 
 
-    /* =========================
-       زبون موجود
-    ========================= */
+/* تحديث النقاط */
 
-    if(found.length > 0){
+await supabaseRequest(
+"customers?id=eq." + customer.id,
+{
+method:"PATCH",
 
-      customer =
-        found[0];
+headers:{
+"Prefer":"return=representation"
+},
 
+body:JSON.stringify({
+points:newPoints
+})
+}
+);
 
-      const oldPoints =
-        Number(
-          customer.points || 0
-        );
+customer.points = newPoints;
 
+}
 
-      const newPoints =
-        Math.max(
-          0,
-          oldPoints +
-          (direction * value)
-        );
 
+/* =========================
+   زبون جديد
+========================= */
 
-      await supabaseRequest(
-        "customers?id=eq." +
-        customer.id,
-        {
-          method:"PATCH",
+else{
 
-          headers:{
-            "Prefer":
-              "return=representation"
-          },
+if(direction < 0){
 
-          body:JSON.stringify({
+status.textContent =
+"الزبون غير موجود، لا يمكن خصم نقاط.";
 
-            name:customer.name,
+return;
 
-            phone:customer.phone,
+}
 
-            points:newPoints
+const inserted =
+await supabaseRequest(
+"customers",
+{
+method:"POST",
 
-          })
-        }
-      );
+headers:{
+"Prefer":"return=representation"
+},
 
+body:JSON.stringify({
 
-      /*
-        مهم:
-        نأخذ الاسم والرقم من قاعدة البيانات
-        وليس من الخانات.
-      */
+shop_id:SHOP_ID,
 
-      customer.points =
-        newPoints;
+name:name,
 
-    }
+phone:phone,
 
+points:value
 
-    /* =========================
-       زبون جديد
-    ========================= */
+})
+}
+);
 
-    else{
+customer = inserted[0];
 
-      if(direction < 0){
+}
 
-        status.textContent =
-          "الزبون غير موجود، لا يمكن خصم نقاط.";
 
-        return;
+/* =========================
+   الاسم والرقم
+========================= */
 
-      }
+const historyName =
+customer.name || name;
 
+const historyPhone =
+customer.phone || phone;
 
-      const inserted =
-        await supabaseRequest(
-          "customers",
-          {
-            method:"POST",
 
-            headers:{
-              "Prefer":
-                "return=representation"
-            },
+/* =========================
+   حفظ سجل العملية
+========================= */
 
-            body:JSON.stringify({
+const historyResult =
+await supabaseRequest(
+"points_history",
+{
+method:"POST",
 
-              shop_id:SHOP_ID,
+headers:{
+"Prefer":"return=representation"
+},
 
-              name:name,
+body:JSON.stringify({
 
-              phone:phone,
+shop_id:SHOP_ID,
 
-              points:value
+customer_id:customer.id,
 
-            })
-          }
-        );
+customer_name:historyName,
 
+customer_phone:historyPhone,
 
-      customer =
-        inserted[0];
+points:value,
 
-    }
+action:
+direction === 1
+? "add"
+: "remove"
 
+})
+}
+);
 
-    /* =========================
-       اسم ورقم مضمونين
-    ========================= */
 
-    const historyName =
-      customer.name || name;
+/* التأكد أن السجل انحفظ */
 
-    const historyPhone =
-      customer.phone || phone;
+if(!historyResult){
 
+throw new Error(
+"تم تحديث النقاط لكن لم يتم تأكيد حفظ سجل العملية."
+);
 
-    /* =========================
-       حفظ سجل العملية
-    ========================= */
+}
 
-    await supabaseRequest(
-      "points_history",
-      {
-        method:"POST",
 
-        headers:{
-          "Prefer":
-            "return=representation"
-        },
+/* =========================
+   نجاح
+========================= */
 
-        body:JSON.stringify({
+status.textContent =
+direction === 1
+? "✅ تمت إضافة النقاط وحفظ السجل"
+: "✅ تم خصم النقاط وحفظ السجل";
 
-          shop_id:SHOP_ID,
+document.getElementById("points")
+.value = "";
 
-          customer_id:
-            customer.id,
+await render();
 
-          customer_name:
-            historyName,
+await loadHistory();
 
-          customer_phone:
-            historyPhone,
 
-          points:value,
+}catch(error){
 
-          action:
-            direction === 1
-              ? "add"
-              : "remove"
+console.error(error);
 
-        })
-      }
-    );
+status.innerHTML =
+"❌ حدث خطأ:<br>" +
+escapeHtml(error.message);
 
-
-    status.textContent =
-      direction === 1
-        ? "✅ تمت إضافة النقاط وحفظ العملية"
-        : "✅ تم خصم النقاط وحفظ العملية";
-
-
-    pointsInput.value = "";
-
-
-    await render();
-
-    await loadHistory();
-
-
-  }catch(error){
-
-    console.error(error);
-
-    status.innerHTML =
-      "❌ لم تتم العملية:<br>" +
-      escapeHtml(
-        error.message
-      );
-
-  }
+}
 
 }
 
@@ -731,32 +622,13 @@ async function changePoints(direction){
 
 function escapeHtml(value){
 
-  return String(value)
+return String(value)
 
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
 
 }
 
@@ -767,12 +639,11 @@ function escapeHtml(value){
 
 async function start(){
 
-  await render();
+await render();
 
-  await loadHistory();
+await loadHistory();
 
 }
-
 
 start();
 
