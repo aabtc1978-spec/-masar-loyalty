@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>مسار | لوحة صاحب المحل</title>
 
 <style>
@@ -188,6 +187,8 @@ button.red{
   padding:12px 0;
 }
 
+/* سجل النقاط */
+
 .history-item{
   border-top:1px solid #eee;
   padding:14px 4px;
@@ -196,26 +197,12 @@ button.red{
 .history-top{
   display:flex;
   justify-content:space-between;
-  align-items:center;
   gap:10px;
+  align-items:center;
 }
 
 .history-name{
   font-weight:bold;
-  font-size:17px;
-}
-
-.history-phone{
-  color:#777;
-  margin-top:5px;
-  direction:ltr;
-  text-align:right;
-}
-
-.history-meta{
-  color:#777;
-  font-size:13px;
-  margin-top:7px;
 }
 
 .history-add{
@@ -226,6 +213,17 @@ button.red{
 .history-remove{
   color:#b42318;
   font-weight:bold;
+}
+
+.history-meta{
+  color:#777;
+  font-size:13px;
+  margin-top:6px;
+}
+
+.history-date{
+  direction:ltr;
+  text-align:right;
 }
 
 @media(max-width:650px){
@@ -247,9 +245,11 @@ button.red{
   }
 
   .customer,
-  .search-result{
+  .search-result,
+  .history-top{
     align-items:flex-start;
   }
+
 }
 </style>
 </head>
@@ -258,11 +258,20 @@ button.red{
 
 <div class="wrap">
 
+  <!-- رأس الصفحة -->
+
   <div class="top">
 
     <div>
-      <div class="muted">مسار • لوحة صاحب المحل</div>
-      <h1>محل مسار التجريبي</h1>
+
+      <div class="muted">
+        مسار • لوحة صاحب المحل
+      </div>
+
+      <h1>
+        محل مسار التجريبي
+      </h1>
+
     </div>
 
     <div class="badge">
@@ -271,28 +280,59 @@ button.red{
 
   </div>
 
+
+  <!-- الإحصائيات -->
+
   <div class="grid">
 
     <div class="card">
-      <div class="muted">عدد الزبائن</div>
-      <div class="num" id="count">0</div>
+
+      <div class="muted">
+        عدد الزبائن
+      </div>
+
+      <div class="num" id="count">
+        0
+      </div>
+
     </div>
 
-    <div class="card">
-      <div class="muted">إجمالي النقاط</div>
-      <div class="num" id="total">0</div>
-    </div>
 
     <div class="card">
-      <div class="muted">المكافأة القادمة</div>
-      <div class="num">100</div>
+
+      <div class="muted">
+        إجمالي النقاط
+      </div>
+
+      <div class="num" id="total">
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="muted">
+        المكافأة القادمة
+      </div>
+
+      <div class="num">
+        100
+      </div>
+
     </div>
 
   </div>
 
+
+  <!-- البحث -->
+
   <div class="card">
 
-    <h2>🔎 البحث عن زبون سابق</h2>
+    <h2>
+      🔎 البحث عن زبون سابق
+    </h2>
 
     <input
       id="searchName"
@@ -305,9 +345,14 @@ button.red{
 
   </div>
 
+
+  <!-- إضافة وخصم -->
+
   <div class="card">
 
-    <h2>إضافة زبون / تحديث النقاط</h2>
+    <h2>
+      إضافة زبون / تحديث النقاط
+    </h2>
 
     <input
       id="name"
@@ -347,57 +392,88 @@ button.red{
 
     </div>
 
-    <div id="status" class="status"></div>
+    <div
+      id="status"
+      class="status"
+    ></div>
 
   </div>
 
+
+  <!-- قائمة الزبائن -->
+
   <div class="card">
 
-    <h2>الزبائن</h2>
+    <h2>
+      الزبائن
+    </h2>
 
-    <div id="list" class="loading">
+    <div
+      id="list"
+      class="loading"
+    >
       جارِ تحميل الزبائن...
     </div>
 
   </div>
 
+
+  <!-- سجل النقاط -->
+
   <div class="card">
 
-    <div class="top">
-      <h2>سجل النقاط</h2>
+    <h2>
+      🧾 سجل النقاط
+    </h2>
 
-      <button
-        type="button"
-        style="width:auto;margin-top:0;padding:9px 14px"
-        onclick="loadHistory()"
-      >
-        تحديث
-      </button>
-    </div>
-
-    <div id="history" class="loading">
-      جارِ تحميل سجل النقاط...
+    <div
+      id="historyList"
+      class="loading"
+    >
+      جارِ تحميل السجل...
     </div>
 
   </div>
 
+
+  <!-- المكافآت -->
+
   <div class="card">
 
-    <h2>المكافآت</h2>
+    <h2>
+      المكافآت
+    </h2>
 
     <div class="customer">
-      <div>خصم 10%</div>
-      <div class="points">100 نقطة</div>
+
+      <div>
+        خصم 10%
+      </div>
+
+      <div class="points">
+        100 نقطة
+      </div>
+
     </div>
 
+
     <div class="customer">
-      <div>هدية مجانية</div>
-      <div class="points">200 نقطة</div>
+
+      <div>
+        هدية مجانية
+      </div>
+
+      <div class="points">
+        200 نقطة
+      </div>
+
     </div>
 
   </div>
 
 </div>
+
+
 <script>
 
 /* =====================================================
@@ -407,8 +483,10 @@ button.red{
 const SUPABASE_URL =
 "https://zobsoaasyuqtqniwfcyd.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7";
+
 
 const SHOP_ID = 1;
 
@@ -419,44 +497,76 @@ const SHOP_ID = 1;
 
 let customers = [];
 
+let history = [];
+
 
 /* =====================================================
    الاتصال بـ Supabase
 ===================================================== */
 
-async function supabaseRequest(endpoint, options = {}){
+async function supabaseRequest(
+  endpoint,
+  options = {}
+){
 
-  const response = await fetch(
-    SUPABASE_URL + "/rest/v1/" + endpoint,
-    {
-      ...options,
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/" +
+      endpoint,
+      {
+        ...options,
 
-      headers:{
-        "apikey":SUPABASE_KEY,
-        "Authorization":"Bearer " + SUPABASE_KEY,
-        "Content-Type":"application/json",
-        "Prefer":"return=representation",
-        ...(options.headers || {})
+        headers:{
+          "apikey":SUPABASE_KEY,
+
+          "Authorization":
+            "Bearer " + SUPABASE_KEY,
+
+          "Content-Type":
+            "application/json",
+
+          "Prefer":
+            "return=representation",
+
+          ...(options.headers || {})
+        }
       }
-    }
-  );
+    );
 
-  const text = await response.text();
+
+  const text =
+    await response.text();
+
 
   let data = null;
 
+
   try{
-    data = text ? JSON.parse(text) : null;
+
+    data =
+      text
+      ? JSON.parse(text)
+      : null;
+
   }
+
   catch{
+
     data = text;
+
   }
+
 
   if(!response.ok){
 
     let message = "";
 
-    if(typeof data === "object" && data !== null){
+
+    if(
+      typeof data === "object" &&
+      data !== null
+    ){
 
       message =
         data.message ||
@@ -466,11 +576,14 @@ async function supabaseRequest(endpoint, options = {}){
         JSON.stringify(data);
 
     }
+
     else{
 
-      message = String(data);
+      message =
+        String(data);
 
     }
+
 
     throw new Error(
       "Supabase " +
@@ -480,6 +593,7 @@ async function supabaseRequest(endpoint, options = {}){
     );
 
   }
+
 
   return data;
 
@@ -495,38 +609,54 @@ async function loadCustomers(){
   const list =
     document.getElementById("list");
 
-  list.className = "loading";
+
+  list.className =
+    "loading";
+
 
   list.textContent =
     "جارِ تحميل الزبائن...";
+
 
   try{
 
     customers =
       await supabaseRequest(
         "customers" +
-        "?shop_id=eq." + SHOP_ID +
+        "?shop_id=eq." +
+        SHOP_ID +
         "&select=id,created_at,shop_id,name,phone,points" +
         "&order=id.asc"
       );
 
+
     if(!Array.isArray(customers)){
+
       customers = [];
+
     }
+
 
     renderCustomers();
 
   }
+
   catch(error){
 
     console.error(error);
 
-    list.className = "empty";
+
+    list.className =
+      "empty";
+
 
     list.innerHTML =
-      "ما قدرنا نقرأ الزبائن من Supabase.<br><br>" +
+      "ما قدرنا نقرأ الزبائن من Supabase." +
+      "<br><br>" +
       "<b>الخطأ:</b><br>" +
-      escapeHtml(error.message);
+      escapeHtml(
+        error.message
+      );
 
   }
 
@@ -542,8 +672,10 @@ function renderCustomers(){
   const count =
     document.getElementById("count");
 
+
   const total =
     document.getElementById("total");
+
 
   const list =
     document.getElementById("list");
@@ -556,14 +688,18 @@ function renderCustomers(){
   total.textContent =
     customers.reduce(
       (sum, customer) =>
-        sum + Number(customer.points || 0),
+        sum +
+        Number(
+          customer.points || 0
+        ),
       0
     );
 
 
   if(customers.length === 0){
 
-    list.className = "empty";
+    list.className =
+      "empty";
 
     list.textContent =
       "لا يوجد زبائن.";
@@ -573,7 +709,8 @@ function renderCustomers(){
   }
 
 
-  list.className = "";
+  list.className =
+    "";
 
 
   list.innerHTML =
@@ -581,13 +718,22 @@ function renderCustomers(){
       .map(customer => {
 
         const name =
-          escapeHtml(customer.name || "");
+          escapeHtml(
+            customer.name || ""
+          );
+
 
         const phone =
-          escapeHtml(customer.phone || "");
+          escapeHtml(
+            customer.phone || ""
+          );
+
 
         const points =
-          Number(customer.points || 0);
+          Number(
+            customer.points || 0
+          );
+
 
         return `
 
@@ -620,16 +766,21 @@ function renderCustomers(){
 
 
 /* =====================================================
-   البحث بالاسم
+   البحث عن الزبون بالاسم
 ===================================================== */
 
 function searchCustomers(){
 
   const input =
-    document.getElementById("searchName");
+    document.getElementById(
+      "searchName"
+    );
+
 
   const results =
-    document.getElementById("searchResults");
+    document.getElementById(
+      "searchResults"
+    );
 
 
   const query =
@@ -640,7 +791,8 @@ function searchCustomers(){
 
   if(!query){
 
-    results.innerHTML = "";
+    results.innerHTML =
+      "";
 
     return;
 
@@ -648,24 +800,32 @@ function searchCustomers(){
 
 
   const matches =
-    customers.filter(customer =>
-
-      String(customer.name || "")
+    customers.filter(
+      customer =>
+        String(
+          customer.name || ""
+        )
         .toLowerCase()
         .includes(query)
-
     );
 
 
   if(matches.length === 0){
 
     results.innerHTML =
-      '<div class="empty">ماكو زبون بهذا الاسم.</div>';
+      '<div class="empty">' +
+      'ماكو زبون بهذا الاسم.' +
+      '</div>';
 
     return;
 
   }
 
+
+  /*
+     إذا أكثر من زبون بنفس الاسم
+     يظهر كل واحد ورقمه.
+  */
 
   results.innerHTML =
     matches
@@ -674,14 +834,24 @@ function searchCustomers(){
         const id =
           Number(customer.id);
 
+
         const name =
-          escapeHtml(customer.name || "");
+          escapeHtml(
+            customer.name || ""
+          );
+
 
         const phone =
-          escapeHtml(customer.phone || "");
+          escapeHtml(
+            customer.phone || ""
+          );
+
 
         const points =
-          Number(customer.points || 0);
+          Number(
+            customer.points || 0
+          );
+
 
         return `
 
@@ -719,7 +889,7 @@ function searchCustomers(){
 
 
 /* =====================================================
-   اختيار زبون
+   اختيار زبون من البحث
 ===================================================== */
 
 function selectCustomer(id){
@@ -727,32 +897,89 @@ function selectCustomer(id){
   const customer =
     customers.find(
       item =>
-        Number(item.id) === Number(id)
+        Number(item.id) ===
+        Number(id)
     );
 
 
   if(!customer){
+
     return;
+
   }
 
 
-  document.getElementById("name").value =
+  document.getElementById(
+    "name"
+  ).value =
     customer.name || "";
 
 
-  document.getElementById("phone").value =
+  document.getElementById(
+    "phone"
+  ).value =
     customer.phone || "";
 
 
-  document.getElementById("searchName").value =
+  document.getElementById(
+    "searchName"
+  ).value =
     "";
 
 
-  document.getElementById("searchResults").innerHTML =
+  document.getElementById(
+    "searchResults"
+  ).innerHTML =
     "";
 
 
-  document.getElementById("points").focus();
+  document.getElementById(
+    "points"
+  ).focus();
+
+}
+
+
+/* =====================================================
+   إضافة العملية إلى points_history
+===================================================== */
+
+async function addHistory(
+  customerId,
+  customerName,
+  customerPhone,
+  points,
+  action
+){
+
+  return await supabaseRequest(
+    "points_history",
+    {
+      method:"POST",
+
+      body:JSON.stringify({
+
+        shop_id:SHOP_ID,
+
+        customer_id:
+          customerId,
+
+        customer_name:
+          customerName,
+
+        customer_phone:
+          customerPhone,
+
+        points:
+          points,
+
+        action:
+          action
+
+      })
+
+    }
+  );
 
 }
 
@@ -761,22 +988,31 @@ function selectCustomer(id){
    إضافة أو خصم النقاط
 ===================================================== */
 
-async function changePoints(direction){
+async function changePoints(
+  direction
+){
 
   const name =
-    document.getElementById("name")
-      .value
-      .trim();
+    document.getElementById(
+      "name"
+    )
+    .value
+    .trim();
+
 
   const phone =
-    document.getElementById("phone")
-      .value
-      .trim();
+    document.getElementById(
+      "phone"
+    )
+    .value
+    .trim();
+
 
   const points =
     Number(
-      document.getElementById("points")
-        .value
+      document.getElementById(
+        "points"
+      ).value
     );
 
 
@@ -788,6 +1024,7 @@ async function changePoints(direction){
     );
 
     return;
+
   }
 
 
@@ -799,10 +1036,14 @@ async function changePoints(direction){
     );
 
     return;
+
   }
 
 
-  if(!Number.isFinite(points) || points <= 0){
+  if(
+    !Number.isFinite(points) ||
+    points <= 0
+  ){
 
     showStatus(
       "اكتب عدد نقاط صحيح.",
@@ -810,95 +1051,106 @@ async function changePoints(direction){
     );
 
     return;
+
   }
 
 
   try{
 
+    /*
+       نبحث عن الزبون بواسطة
+       رقم الهاتف + المحل
+    */
+
     const found =
       await supabaseRequest(
         "customers" +
-        "?shop_id=eq." + SHOP_ID +
+        "?shop_id=eq." +
+        SHOP_ID +
         "&phone=eq." +
         encodeURIComponent(phone) +
         "&select=id,name,phone,points"
       );
 
 
+    let customerId =
+      null;
+
+
+    let newPoints =
+      points;
+
+
+    /* =================================================
+       الزبون موجود
+    ================================================= */
+
     if(found.length > 0){
 
       const customer =
         found[0];
 
+
+      customerId =
+        customer.id;
+
+
       const oldPoints =
-        Number(customer.points || 0);
-
-
-      const newPoints =
-        Math.max(
-          0,
-          oldPoints + (direction * points)
+        Number(
+          customer.points || 0
         );
 
 
+      newPoints =
+        Math.max(
+          0,
+          oldPoints +
+          (
+            direction *
+            points
+          )
+        );
+
+
+      /*
+         تحديث جدول customers
+      */
+
       await supabaseRequest(
         "customers" +
-        "?id=eq." + customer.id +
-        "&shop_id=eq." + SHOP_ID,
+        "?id=eq." +
+        customer.id +
+        "&shop_id=eq." +
+        SHOP_ID,
         {
           method:"PATCH",
 
           body:JSON.stringify({
+
             name:name,
+
             phone:phone,
+
             points:newPoints
+
           })
+
         }
       );
 
+    }
+
+
+    /* =================================================
+       الزبون غير موجود
+    ================================================= */
+
+    else{
 
       /*
-         تسجيل العملية في points_history
+         لا نسمح بالخصم من زبون
+         غير مسجل.
       */
-
-      await addHistory(
-        customer.id,
-        name,
-        phone,
-        points,
-        direction === 1 ? "add" : "remove"
-      );
-
-
-      if(direction === 1){
-
-        showStatus(
-          "تمت إضافة " +
-          points +
-          " نقطة.\n" +
-          "الرصيد الجديد: " +
-          newPoints +
-          " نقطة.",
-          false
-        );
-
-      }
-      else{
-
-        showStatus(
-          "تم خصم " +
-          points +
-          " نقطة.\n" +
-          "الرصيد الجديد: " +
-          newPoints +
-          " نقطة.",
-          false
-        );
-
-      }
-
-    }
-    else{
 
       if(direction === -1){
 
@@ -913,6 +1165,10 @@ async function changePoints(direction){
       }
 
 
+      /*
+         إنشاء زبون جديد
+      */
+
       const created =
         await supabaseRequest(
           "customers",
@@ -920,38 +1176,119 @@ async function changePoints(direction){
             method:"POST",
 
             body:JSON.stringify({
-              shop_id:SHOP_ID,
-              name:name,
-              phone:phone,
-              points:points
+
+              shop_id:
+                SHOP_ID,
+
+              name:
+                name,
+
+              phone:
+                phone,
+
+              points:
+                points
+
             })
+
           }
         );
 
 
-      const newCustomer =
-        Array.isArray(created)
-          ? created[0]
-          : created;
+      if(
+        Array.isArray(created) &&
+        created.length > 0
+      ){
+
+        customerId =
+          created[0].id;
+
+      }
 
 
-      /*
-         تسجيل إضافة الزبون الجديد
-      */
+      newPoints =
+        points;
+
+    }
+
+
+    /* =================================================
+       تسجيل العملية في points_history
+    ================================================= */
+
+    const action =
+      direction === 1
+      ? "add"
+      : "remove";
+
+
+    try{
 
       await addHistory(
-        newCustomer.id,
+        customerId,
         name,
         phone,
         points,
-        "add"
+        action
+      );
+
+    }
+
+    catch(historyError){
+
+      console.error(
+        historyError
       );
 
 
+      /*
+         الزبون تم تحديثه،
+         لكن سجل العملية فشل.
+      */
+
       showStatus(
-        "تم تسجيل الزبون الجديد.\n" +
+        "تم تحديث رصيد الزبون، " +
+        "لكن تعذر تسجيل العملية في السجل.\n\n" +
+        historyError.message,
+        true
+      );
+
+
+      await loadCustomers();
+
+      await loadHistory();
+
+      return;
+
+    }
+
+
+    /* =================================================
+       رسالة النجاح
+    ================================================= */
+
+    if(direction === 1){
+
+      showStatus(
         "تمت إضافة " +
         points +
+        " نقطة.\n" +
+        "الرصيد الجديد: " +
+        newPoints +
+        " نقطة.",
+        false
+      );
+
+    }
+
+    else{
+
+      showStatus(
+        "تم خصم " +
+        points +
+        " نقطة.\n" +
+        "الرصيد الجديد: " +
+        newPoints +
         " نقطة.",
         false
       );
@@ -959,18 +1296,42 @@ async function changePoints(direction){
     }
 
 
-    document.getElementById("points")
-      .value = "";
+    /*
+       تنظيف خانة النقاط
+    */
 
+    document.getElementById(
+      "points"
+    ).value =
+      "";
+
+
+    /*
+       تحديث قائمة الزبائن
+    */
 
     await loadCustomers();
+
+
+    /*
+       تحديث البحث
+    */
+
+    searchCustomers();
+
+
+    /*
+       تحديث السجل
+    */
 
     await loadHistory();
 
   }
+
   catch(error){
 
     console.error(error);
+
 
     showStatus(
       "حدث خطأ أثناء العملية:\n\n" +
@@ -984,60 +1345,64 @@ async function changePoints(direction){
 
 
 /* =====================================================
-   إضافة سجل إلى points_history
+   تحميل سجل النقاط
 ===================================================== */
 
-async function addHistory(
-  customerId,
-  customerName,
-  customerPhone,
-  points,
-  action
-){
+async function loadHistory(){
+
+  const list =
+    document.getElementById(
+      "historyList"
+    );
+
+
+  list.className =
+    "loading";
+
+
+  list.textContent =
+    "جارِ تحميل السجل...";
+
 
   try{
 
-    await supabaseRequest(
-      "points_history",
-      {
-        method:"POST",
+    history =
+      await supabaseRequest(
+        "points_history" +
+        "?shop_id=eq." +
+        SHOP_ID +
+        "&select=id,created_at,shop_id,customer_id,customer_name,customer_phone,points,action" +
+        "&order=id.desc"
+      );
 
-        body:JSON.stringify({
 
-          shop_id:SHOP_ID,
+    if(!Array.isArray(history)){
 
-          customer_id:customerId,
+      history = [];
 
-          customer_name:customerName,
+    }
 
-          customer_phone:customerPhone,
 
-          points:Number(points),
-
-          action:action
-
-        })
-      }
-    );
+    renderHistory();
 
   }
+
   catch(error){
 
-    console.error(
-      "History error:",
-      error
-    );
+    console.error(error);
 
-    /*
-       إذا فشل السجل، لا نرجع
-       عملية النقاط نفسها.
-    */
 
-    showStatus(
-      "تم تحديث النقاط، لكن تعذر تسجيل العملية في History:\n\n" +
-      error.message,
-      true
-    );
+    list.className =
+      "empty";
+
+
+    list.innerHTML =
+      "ما قدرنا نقرأ سجل النقاط." +
+      "<br><br>" +
+      "<b>الخطأ:</b><br>" +
+      escapeHtml(
+        error.message
+      );
 
   }
 
@@ -1045,132 +1410,129 @@ async function addHistory(
 
 
 /* =====================================================
-   تحميل History
+   عرض سجل النقاط
 ===================================================== */
 
-async function loadHistory(){
+function renderHistory(){
 
-  const history =
-    document.getElementById("history");
-
-  history.className = "loading";
-
-  history.textContent =
-    "جارِ تحميل سجل النقاط...";
+  const list =
+    document.getElementById(
+      "historyList"
+    );
 
 
-  try{
+  if(history.length === 0){
 
-    const rows =
-      await supabaseRequest(
-        "points_history" +
-        "?shop_id=eq." + SHOP_ID +
-        "&select=id,created_at,shop_id,customer_id,customer_name,customer_phone,points,action" +
-        "&order=created_at.desc" +
-        "&limit=100"
-      );
+    list.className =
+      "empty";
 
+    list.textContent =
+      "لا توجد عمليات بالنقاط بعد.";
 
-    if(!Array.isArray(rows) || rows.length === 0){
+    return;
 
-      history.className = "empty";
-
-      history.textContent =
-        "لا يوجد سجل نقاط حاليًا.";
-
-      return;
-
-    }
+  }
 
 
-    history.className = "";
+  list.className =
+    "";
 
 
-    history.innerHTML =
-      rows
-        .map(row => {
+  list.innerHTML =
+    history
+      .map(item => {
 
-          const name =
-            escapeHtml(
-              row.customer_name || ""
-            );
-
-          const phone =
-            escapeHtml(
-              row.customer_phone || ""
-            );
-
-          const points =
-            Number(row.points || 0);
-
-          const isAdd =
-            row.action === "add";
+        const name =
+          escapeHtml(
+            item.customer_name || ""
+          );
 
 
-          const actionText =
-            isAdd
-              ? "إضافة"
-              : "خصم";
+        const phone =
+          escapeHtml(
+            item.customer_phone || ""
+          );
 
 
-          const actionClass =
-            isAdd
-              ? "history-add"
-              : "history-remove";
+        const points =
+          Number(
+            item.points || 0
+          );
 
 
-          const date =
-            formatDate(row.created_at);
+        const action =
+          String(
+            item.action || ""
+          )
+          .toLowerCase();
 
 
-          return `
+        const isAdd =
+          action === "add" ||
+          action === "addition" ||
+          action === "إضافة";
 
-            <div class="history-item">
 
-              <div class="history-top">
+        const actionText =
+          isAdd
+          ? "➕ إضافة"
+          : "➖ خصم";
 
-                <div>
 
-                  <div class="history-name">
-                    ${name}
-                  </div>
+        const actionClass =
+          isAdd
+          ? "history-add"
+          : "history-remove";
 
-                  <div class="history-phone">
-                    ${phone}
-                  </div>
 
+        const dateText =
+          formatDate(
+            item.created_at
+          );
+
+
+        return `
+
+          <div class="history-item">
+
+            <div class="history-top">
+
+              <div>
+
+                <div class="history-name">
+                  ${name}
                 </div>
 
-                <div class="${actionClass}">
-                  ${isAdd ? "+" : "-"}${points}
+                <div class="history-meta">
+                  ${phone}
                 </div>
 
               </div>
 
-              <div class="history-meta">
-                ${actionText} • ${date}
+
+              <div
+                class="${actionClass}"
+              >
+                ${actionText}
+                ${points}
+                نقطة
               </div>
 
             </div>
 
-          `;
 
-        })
-        .join("");
+            <div
+              class="history-meta history-date"
+            >
+              ${dateText}
+            </div>
 
-  }
-  catch(error){
+          </div>
 
-    console.error(error);
+        `;
 
-    history.className = "empty";
-
-    history.innerHTML =
-      "تعذر تحميل History.<br><br>" +
-      "<b>الخطأ:</b><br>" +
-      escapeHtml(error.message);
-
-  }
+      })
+      .join("");
 
 }
 
@@ -1182,7 +1544,9 @@ async function loadHistory(){
 function formatDate(value){
 
   if(!value){
-    return "";
+
+    return "بدون تاريخ";
+
   }
 
 
@@ -1190,8 +1554,16 @@ function formatDate(value){
     new Date(value);
 
 
-  if(Number.isNaN(date.getTime())){
-    return value;
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return escapeHtml(
+      value
+    );
+
   }
 
 
@@ -1202,7 +1574,8 @@ function formatDate(value){
       month:"2-digit",
       day:"2-digit",
       hour:"2-digit",
-      minute:"2-digit"
+      minute:"2-digit",
+      second:"2-digit"
     }
   );
 
@@ -1213,10 +1586,15 @@ function formatDate(value){
    رسالة الحالة
 ===================================================== */
 
-function showStatus(message,isError){
+function showStatus(
+  message,
+  isError
+){
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
 
   status.textContent =
@@ -1225,7 +1603,11 @@ function showStatus(message,isError){
 
   status.className =
     "status " +
-    (isError ? "error" : "ok");
+    (
+      isError
+      ? "error"
+      : "ok"
+    );
 
 }
 
@@ -1237,11 +1619,31 @@ function showStatus(message,isError){
 function escapeHtml(value){
 
   return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
@@ -1255,5 +1657,6 @@ loadCustomers();
 loadHistory();
 
 </script>
+
 </body>
 </html>
