@@ -488,7 +488,12 @@ const SUPABASE_KEY =
 "sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7";
 
 
-const SHOP_ID = 1;
+const params = new URLSearchParams(window.location.search);
+
+const SHOP_CODE =
+  params.get("shop") || "masar001";
+
+let SHOP_ID = 1;
 
 
 /* =====================================================
@@ -1360,18 +1365,19 @@ async function loadHistory(){
       "historyList"
     );
 
-
   list.className =
     "loading";
-
 
   list.textContent =
     "جارِ تحميل السجل...";
 
-
   try{
 
-    history =
+    /*
+       نقرأ سجل المحل أولاً بالطريقة الطبيعية.
+    */
+
+    let result =
       await supabaseRequest(
         "points_history" +
         "?shop_id=eq." +
@@ -1380,13 +1386,40 @@ async function loadHistory(){
         "&order=id.desc"
       );
 
+    if(!Array.isArray(result)){
+      result = [];
+    }
 
-    if(!Array.isArray(history)){
+    /*
+       إذا لم يرجع الاستعلام شيئاً،
+       نقرأ آخر السجلات مباشرة ثم نطابق shop_id
+       حتى لا يختفي السجل بسبب فلتر shop_id.
+    */
 
-      history = [];
+    if(result.length === 0){
+
+      const all =
+        await supabaseRequest(
+          "points_history" +
+          "?select=id,created_at,shop_id,customer_id,customer_name,customer_phone,points,action" +
+          "&order=id.desc" +
+          "&limit=100"
+        );
+
+      if(Array.isArray(all)){
+
+        result =
+          all.filter(
+            item =>
+              String(item.shop_id) ===
+              String(SHOP_ID)
+          );
+
+      }
 
     }
 
+    history = result;
 
     renderHistory();
 
@@ -1394,12 +1427,15 @@ async function loadHistory(){
 
   catch(error){
 
-    console.error(error);
+    console.error(
+      "HISTORY LOAD ERROR:",
+      error
+    );
 
+    history = [];
 
     list.className =
       "empty";
-
 
     list.innerHTML =
       "ما قدرنا نقرأ سجل النقاط." +
@@ -1412,7 +1448,6 @@ async function loadHistory(){
   }
 
 }
-
 
 /* =====================================================
    عرض سجل النقاط
