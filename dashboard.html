@@ -7,129 +7,209 @@
 <title>مسار | لوحة صاحب المحل</title>
 
 <style>
+*{
+  box-sizing:border-box;
+}
+
 body{
-margin:0;
-background:#f5f6fa;
-color:#202124;
-font-family:Arial,sans-serif
+  margin:0;
+  background:#f5f6fa;
+  color:#222;
+  font-family:Arial,sans-serif;
 }
 
 .wrap{
-max-width:1000px;
-margin:auto;
-padding:20px
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center
-}
-
-.muted{
-color:#777;
-font-size:13px
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-margin:18px 0
+  max-width:1000px;
+  margin:auto;
+  padding:18px;
 }
 
 .card{
-background:#fff;
-border-radius:16px;
-padding:18px;
-margin:12px 0;
-box-shadow:0 3px 16px #0000000d
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  margin:14px 0;
+  box-shadow:0 4px 18px #00000010;
 }
 
-.num{
-font-size:30px;
-font-weight:700;
-margin-top:8px
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
 }
 
-input,button{
-width:100%;
-padding:12px;
-border-radius:10px;
-margin-top:9px;
-font-size:15px;
-box-sizing:border-box
+h1{
+  margin:6px 0;
+  font-size:28px;
 }
 
-input{
-border:1px solid #ddd;
-background:#fff
+h2{
+  margin-top:0;
 }
 
-button{
-border:0;
-background:#111;
-color:#fff;
-cursor:pointer
-}
-
-.row{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px
-}
-
-.customer{
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-top:1px solid #eee;
-padding:13px 0
+.muted{
+  color:#777;
+  font-size:13px;
 }
 
 .badge{
-padding:5px 9px;
-border-radius:20px;
-background:#eee
+  background:#eee;
+  padding:7px 12px;
+  border-radius:20px;
+  font-size:13px;
 }
 
-.search-result{
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-top:1px solid #eee;
-padding:13px 5px;
-cursor:pointer
-}
-
-.search-result:hover{
-background:#f5f5f5
-}
-
-.green{
-background:#159447
-}
-
-.red{
-background:#d92d20
-}
-
-.status{
-padding:10px;
-border-radius:10px;
-background:#f1f1f1;
-margin-top:10px;
-display:none
-}
-
-@media(max-width:650px){
 .grid{
-grid-template-columns:1fr
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:16px 0;
+}
+
+.num{
+  font-size:30px;
+  font-weight:bold;
+  margin-top:8px;
+}
+
+input,
+button{
+  width:100%;
+  padding:13px;
+  border-radius:11px;
+  font-size:16px;
+  margin-top:9px;
+}
+
+input{
+  border:1px solid #ddd;
+  background:#fff;
+  outline:none;
+}
+
+input:focus{
+  border-color:#777;
+}
+
+button{
+  border:0;
+  background:#222;
+  color:#fff;
+  cursor:pointer;
+}
+
+button.green{
+  background:#159447;
+}
+
+button.red{
+  background:#d92d20;
 }
 
 .row{
-grid-template-columns:1fr
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
+
+.customer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border-top:1px solid #eee;
+  padding:14px 4px;
+}
+
+.customer-info{
+  min-width:0;
+}
+
+.customer-name{
+  font-weight:bold;
+  font-size:17px;
+}
+
+.customer-phone{
+  color:#777;
+  margin-top:5px;
+  direction:ltr;
+  text-align:right;
+}
+
+.points{
+  white-space:nowrap;
+  font-weight:bold;
+}
+
+.search-result{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border-top:1px solid #eee;
+  padding:14px 5px;
+  cursor:pointer;
+}
+
+.search-result:hover{
+  background:#f7f7f7;
+}
+
+.status{
+  display:none;
+  padding:12px;
+  margin-top:12px;
+  border-radius:10px;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.status.ok{
+  display:block;
+  color:#067647;
+  background:#ecfdf3;
+}
+
+.status.error{
+  display:block;
+  color:#b42318;
+  background:#fef3f2;
+}
+
+.loading{
+  color:#777;
+  padding:12px 0;
+}
+
+.empty{
+  color:#777;
+  padding:12px 0;
+}
+
+@media(max-width:650px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .row{
+    grid-template-columns:1fr;
+  }
+
+  .top{
+    align-items:flex-start;
+  }
+
+  h1{
+    font-size:23px;
+  }
+
+  .customer,
+  .search-result{
+    align-items:flex-start;
+  }
 }
 </style>
 </head>
@@ -138,146 +218,150 @@ grid-template-columns:1fr
 
 <div class="wrap">
 
-<div class="top">
+  <!-- رأس الصفحة -->
 
-<div>
-<div class="muted">مسار • لوحة صاحب المحل</div>
-<h1>محل مسار التجريبي</h1>
-</div>
+  <div class="top">
 
-<div class="badge">
-Supabase
-</div>
+    <div>
+      <div class="muted">مسار • لوحة صاحب المحل</div>
+      <h1>محل مسار التجريبي</h1>
+    </div>
 
-</div>
+    <div class="badge">
+      Supabase
+    </div>
 
-
-<!-- الإحصائيات -->
-
-<div class="grid">
-
-<div class="card">
-<div class="muted">عدد الزبائن</div>
-<div class="num" id="count">0</div>
-</div>
-
-<div class="card">
-<div class="muted">إجمالي النقاط</div>
-<div class="num" id="total">0</div>
-</div>
-
-<div class="card">
-<div class="muted">المكافأة القادمة</div>
-<div class="num">100</div>
-</div>
-
-</div>
+  </div>
 
 
-<!-- البحث -->
+  <!-- الإحصائيات -->
 
-<div class="card">
+  <div class="grid">
 
-<h2>🔎 البحث عن زبون سابق</h2>
+    <div class="card">
+      <div class="muted">عدد الزبائن</div>
+      <div class="num" id="count">0</div>
+    </div>
 
-<input
-id="searchName"
-placeholder="اكتب اسم الزبون"
-oninput="searchCustomers()"
->
+    <div class="card">
+      <div class="muted">إجمالي النقاط</div>
+      <div class="num" id="total">0</div>
+    </div>
 
-<div id="searchResults"></div>
+    <div class="card">
+      <div class="muted">المكافأة القادمة</div>
+      <div class="num">100</div>
+    </div>
 
-</div>
-
-
-<!-- إضافة وخصم -->
-
-<div class="card">
-
-<h2>إضافة زبون / تحديث نقاط</h2>
-
-<input
-id="name"
-placeholder="اسم الزبون"
->
-
-<input
-id="phone"
-placeholder="رقم الهاتف"
->
-
-<input
-id="points"
-type="number"
-placeholder="عدد النقاط"
->
-
-<div class="row">
-
-<button
-class="green"
-onclick="changePoints(1)"
->
-➕ إضافة نقاط
-</button>
-
-<button
-class="red"
-onclick="changePoints(-1)"
->
-➖ خصم نقاط
-</button>
-
-</div>
-
-<div
-id="status"
-class="status"
-></div>
-
-</div>
+  </div>
 
 
-<!-- الزبائن -->
+  <!-- البحث -->
 
-<div class="card">
+  <div class="card">
 
-<h2>الزبائن</h2>
+    <h2>🔎 البحث عن زبون سابق</h2>
 
-<div id="list">
-جارِ تحميل الزبائن...
-</div>
+    <input
+      id="searchName"
+      type="text"
+      placeholder="اكتب اسم الزبون للبحث"
+      oninput="searchCustomers()"
+    >
 
-</div>
+    <div id="searchResults"></div>
+
+  </div>
 
 
-<!-- المكافآت -->
+  <!-- إضافة وخصم -->
 
-<div class="card">
+  <div class="card">
 
-<h2>المكافآت</h2>
+    <h2>إضافة زبون / تحديث النقاط</h2>
 
-<div class="customer">
-<span>خصم 10%</span>
-<b>100 نقطة</b>
-</div>
+    <input
+      id="name"
+      type="text"
+      placeholder="اسم الزبون"
+    >
 
-<div class="customer">
-<span>هدية مجانية</span>
-<b>200 نقطة</b>
-</div>
+    <input
+      id="phone"
+      type="text"
+      placeholder="رقم الهاتف"
+      inputmode="tel"
+    >
 
-</div>
+    <input
+      id="points"
+      type="number"
+      min="1"
+      placeholder="عدد النقاط"
+    >
+
+    <div class="row">
+
+      <button
+        class="green"
+        onclick="changePoints(1)"
+      >
+        ➕ إضافة نقاط
+      </button>
+
+      <button
+        class="red"
+        onclick="changePoints(-1)"
+      >
+        ➖ خصم نقاط
+      </button>
+
+    </div>
+
+    <div id="status" class="status"></div>
+
+  </div>
+
+
+  <!-- قائمة الزبائن -->
+
+  <div class="card">
+
+    <h2>الزبائن</h2>
+
+    <div id="list" class="loading">
+      جارِ تحميل الزبائن...
+    </div>
+
+  </div>
+
+
+  <!-- المكافآت -->
+
+  <div class="card">
+
+    <h2>المكافآت</h2>
+
+    <div class="customer">
+      <div>خصم 10%</div>
+      <div class="points">100 نقطة</div>
+    </div>
+
+    <div class="customer">
+      <div>هدية مجانية</div>
+      <div class="points">200 نقطة</div>
+    </div>
+
+  </div>
 
 </div>
 
 
 <script>
 
-/* ==============================
+/* =====================================================
    إعداد Supabase
-============================== */
+===================================================== */
 
 const SUPABASE_URL =
 "https://zobsoaasyuqtqniwfcyd.supabase.co";
@@ -285,427 +369,630 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7";
 
+/*
+   رقم المحل الموجود عندك في جدول customers
+*/
 const SHOP_ID = 1;
 
 
-/* ==============================
-   طلب إلى Supabase REST API
-============================== */
-
-async function supabaseRequest(
-url,
-options={}
-){
-
-const response =
-await fetch(
-SUPABASE_URL + "/rest/v1/" + url,
-{
-...options,
-
-headers:{
-"apikey":SUPABASE_KEY,
-"Authorization":"Bearer " + SUPABASE_KEY,
-"Content-Type":"application/json",
-"Prefer":"return=representation",
-...(options.headers || {})
-}
-}
-);
-
-const text =
-await response.text();
-
-let data;
-
-try{
-data =
-text ? JSON.parse(text) : null;
-}
-catch{
-data = text;
-}
-
-if(!response.ok){
-
-throw new Error(
-typeof data === "string"
-?
-data
-:
-JSON.stringify(data)
-);
-
-}
-
-return data;
-
-}
-
-
-/* ==============================
-   تحميل الزبائن
-============================== */
+/* =====================================================
+   متغيرات البرنامج
+===================================================== */
 
 let customers = [];
 
 
+/* =====================================================
+   الاتصال بـ Supabase
+===================================================== */
+
+async function supabaseRequest(endpoint, options = {}){
+
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/" + endpoint,
+    {
+      ...options,
+
+      headers:{
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer " + SUPABASE_KEY,
+        "Content-Type":"application/json",
+        "Prefer":"return=representation",
+        ...(options.headers || {})
+      }
+    }
+  );
+
+  const text = await response.text();
+
+  let data = null;
+
+  try{
+    data = text ? JSON.parse(text) : null;
+  }
+  catch{
+    data = text;
+  }
+
+  if(!response.ok){
+
+    let message = "";
+
+    if(typeof data === "object" && data !== null){
+      message =
+        data.message ||
+        data.msg ||
+        data.hint ||
+        data.details ||
+        JSON.stringify(data);
+    }
+    else{
+      message = String(data);
+    }
+
+    throw new Error(
+      "Supabase " +
+      response.status +
+      ":\n" +
+      message
+    );
+  }
+
+  return data;
+}
+
+
+/* =====================================================
+   تحميل الزبائن من Supabase
+===================================================== */
+
 async function loadCustomers(){
 
-try{
+  const list =
+    document.getElementById("list");
 
-customers =
-await supabaseRequest(
-"customers?shop_id=eq." +
-SHOP_ID +
-"&select=id,created_at,shop_id,name,phone,points&order=id.asc"
-);
+  list.className = "loading";
 
-renderCustomers();
+  list.textContent =
+    "جارِ تحميل الزبائن...";
+
+  try{
+
+    customers =
+      await supabaseRequest(
+        "customers" +
+        "?shop_id=eq." + SHOP_ID +
+        "&select=id,created_at,shop_id,name,phone,points" +
+        "&order=id.asc"
+      );
+
+    if(!Array.isArray(customers)){
+      customers = [];
+    }
+
+    renderCustomers();
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    list.className = "empty";
+
+    list.innerHTML =
+      "ما قدرنا نقرأ الزبائن من Supabase.<br><br>" +
+      "<b>الخطأ:</b><br>" +
+      escapeHtml(error.message);
+
+  }
 
 }
-catch(error){
-
-console.error(error);
-
-document.getElementById("list").innerHTML =
-`
-<div style="color:red">
-حدث خطأ أثناء تحميل الزبائن:
-<br><br>
-${escapeHtml(error.message)}
-</div>
-`;
-
-}
-
-}
 
 
-/* ==============================
+/* =====================================================
    عرض الزبائن
-============================== */
+===================================================== */
 
 function renderCustomers(){
 
-const count =
-document.getElementById("count");
+  const count =
+    document.getElementById("count");
 
-const total =
-document.getElementById("total");
+  const total =
+    document.getElementById("total");
 
-const list =
-document.getElementById("list");
-
-
-count.textContent =
-customers.length;
+  const list =
+    document.getElementById("list");
 
 
-total.textContent =
-customers.reduce(
-(sum,c) =>
-sum + Number(c.points || 0),
-0
-);
+  count.textContent =
+    customers.length;
 
 
-if(!customers.length){
+  total.textContent =
+    customers.reduce(
+      (sum, customer) =>
+        sum + Number(customer.points || 0),
+      0
+    );
 
-list.innerHTML =
-'<div class="muted">لا يوجد زبائن.</div>';
 
-return;
+  if(customers.length === 0){
+
+    list.className = "empty";
+
+    list.textContent =
+      "لا يوجد زبائن.";
+
+    return;
+  }
+
+
+  list.className = "";
+
+
+  list.innerHTML =
+    customers
+      .map(customer => {
+
+        const name =
+          escapeHtml(customer.name || "");
+
+        const phone =
+          escapeHtml(customer.phone || "");
+
+        const points =
+          Number(customer.points || 0);
+
+        return `
+
+          <div class="customer">
+
+            <div class="customer-info">
+
+              <div class="customer-name">
+                ${name}
+              </div>
+
+              <div class="customer-phone">
+                ${phone}
+              </div>
+
+            </div>
+
+            <div class="points">
+              ${points} نقطة
+            </div>
+
+          </div>
+
+        `;
+
+      })
+      .join("");
 
 }
 
 
-list.innerHTML =
-customers.map(c => `
-
-<div class="customer">
-
-<div>
-
-<b>
-${escapeHtml(c.name || "")}
-</b>
-
-<br>
-
-<small>
-${escapeHtml(c.phone || "")}
-</small>
-
-</div>
-
-<b>
-${Number(c.points || 0)} نقطة
-</b>
-
-</div>
-
-`).join("");
-
-}
-
-
-/* ==============================
-   البحث بالاسم
-============================== */
+/* =====================================================
+   البحث عن الزبون بالاسم
+===================================================== */
 
 function searchCustomers(){
 
-const q =
-document
-.getElementById("searchName")
-.value
-.trim()
-.toLowerCase();
+  const input =
+    document.getElementById("searchName");
+
+  const results =
+    document.getElementById("searchResults");
 
 
-const results =
-document.getElementById("searchResults");
+  const query =
+    input.value
+      .trim()
+      .toLowerCase();
 
 
-if(!q){
+  if(!query){
 
-results.innerHTML = "";
+    results.innerHTML = "";
 
-return;
+    return;
+  }
+
+
+  const matches =
+    customers.filter(customer =>
+
+      String(customer.name || "")
+        .toLowerCase()
+        .includes(query)
+
+    );
+
+
+  if(matches.length === 0){
+
+    results.innerHTML =
+      '<div class="empty">ماكو زبون بهذا الاسم.</div>';
+
+    return;
+  }
+
+
+  /*
+     كل اسم يظهر مقابله رقمه.
+     إذا عندنا أكثر من شخص بنفس الاسم
+     راح يظهرون كلهم.
+  */
+
+  results.innerHTML =
+    matches
+      .map(customer => {
+
+        const id =
+          Number(customer.id);
+
+        const name =
+          escapeHtml(customer.name || "");
+
+        const phone =
+          escapeHtml(customer.phone || "");
+
+        const points =
+          Number(customer.points || 0);
+
+        return `
+
+          <div
+            class="search-result"
+            onclick="selectCustomer(${id})"
+          >
+
+            <div>
+
+              <b>
+                ${name}
+              </b>
+
+              <br>
+
+              <small>
+                ${phone}
+              </small>
+
+            </div>
+
+            <b>
+              ${points} نقطة
+            </b>
+
+          </div>
+
+        `;
+
+      })
+      .join("");
 
 }
 
 
-const matches =
-customers.filter(c =>
-String(c.name || "")
-.toLowerCase()
-.includes(q)
-);
-
-
-if(!matches.length){
-
-results.innerHTML =
-'<div class="muted">ماكو زبون بهذا الاسم.</div>';
-
-return;
-
-}
-
-
-results.innerHTML =
-matches.map(c => `
-
-<div
-class="search-result"
-onclick="selectCustomer(${Number(c.id)})"
->
-
-<div>
-
-<b>
-${escapeHtml(c.name || "")}
-</b>
-
-<br>
-
-<small>
-${escapeHtml(c.phone || "")}
-</small>
-
-</div>
-
-<b>
-${Number(c.points || 0)} نقطة
-</b>
-
-</div>
-
-`).join("");
-
-}
-
-
-/* ==============================
-   اختيار زبون
-============================== */
+/* =====================================================
+   اختيار زبون من نتائج البحث
+===================================================== */
 
 function selectCustomer(id){
 
-const customer =
-customers.find(
-c => Number(c.id) === Number(id)
-);
-
-if(!customer)
-return;
+  const customer =
+    customers.find(
+      item =>
+        Number(item.id) === Number(id)
+    );
 
 
-document.getElementById("name")
-.value =
-customer.name || "";
+  if(!customer){
+    return;
+  }
 
 
-document.getElementById("phone")
-.value =
-customer.phone || "";
+  document.getElementById("name").value =
+    customer.name || "";
 
 
-document.getElementById("searchName")
-.value = "";
+  document.getElementById("phone").value =
+    customer.phone || "";
 
 
-document.getElementById("searchResults")
-.innerHTML = "";
+  document.getElementById("searchName").value =
+    "";
 
 
-document.getElementById("points")
-.focus();
+  document.getElementById("searchResults").innerHTML =
+    "";
+
+
+  document.getElementById("points").focus();
 
 }
 
 
-/* ==============================
-   إضافة أو خصم نقاط
-============================== */
+/* =====================================================
+   إضافة أو خصم النقاط
+===================================================== */
 
 async function changePoints(direction){
 
-const name =
-document.getElementById("name")
-.value
-.trim();
+  const name =
+    document.getElementById("name")
+      .value
+      .trim();
 
-const phone =
-document.getElementById("phone")
-.value
-.trim();
+  const phone =
+    document.getElementById("phone")
+      .value
+      .trim();
 
-const points =
-Number(
-document.getElementById("points")
-.value
-);
+  const points =
+    Number(
+      document.getElementById("points")
+        .value
+    );
 
 
-if(!name || !phone || !points){
+  if(!name){
 
-showStatus(
-"أدخل اسم الزبون ورقم الهاتف وعدد النقاط.",
-true
-);
+    showStatus(
+      "اكتب اسم الزبون.",
+      true
+    );
 
-return;
+    return;
+  }
+
+
+  if(!phone){
+
+    showStatus(
+      "اكتب رقم الهاتف.",
+      true
+    );
+
+    return;
+  }
+
+
+  if(!Number.isFinite(points) || points <= 0){
+
+    showStatus(
+      "اكتب عدد نقاط صحيح.",
+      true
+    );
+
+    return;
+  }
+
+
+  try{
+
+    /*
+       نبحث عن الزبون بواسطة:
+       المحل + رقم الهاتف
+    */
+
+    const found =
+      await supabaseRequest(
+        "customers" +
+        "?shop_id=eq." + SHOP_ID +
+        "&phone=eq." +
+        encodeURIComponent(phone) +
+        "&select=id,name,phone,points"
+      );
+
+
+    /*
+       إذا الزبون موجود
+    */
+
+    if(found.length > 0){
+
+      const customer =
+        found[0];
+
+      const oldPoints =
+        Number(customer.points || 0);
+
+
+      const newPoints =
+        Math.max(
+          0,
+          oldPoints + (direction * points)
+        );
+
+
+      /*
+         تحديث الاسم والرقم والنقاط
+      */
+
+      await supabaseRequest(
+        "customers" +
+        "?id=eq." + customer.id +
+        "&shop_id=eq." + SHOP_ID,
+        {
+          method:"PATCH",
+
+          body:JSON.stringify({
+            name:name,
+            phone:phone,
+            points:newPoints
+          })
+        }
+      );
+
+
+      if(direction === 1){
+
+        showStatus(
+          "تمت إضافة " +
+          points +
+          " نقطة.\n" +
+          "الرصيد الجديد: " +
+          newPoints +
+          " نقطة.",
+          false
+        );
+
+      }
+      else{
+
+        showStatus(
+          "تم خصم " +
+          points +
+          " نقطة.\n" +
+          "الرصيد الجديد: " +
+          newPoints +
+          " نقطة.",
+          false
+        );
+
+      }
+
+    }
+
+
+    /*
+       إذا الزبون غير موجود
+    */
+
+    else{
+
+      /*
+         لا نسمح بإنشاء زبون
+         عن طريق الخصم
+      */
+
+      if(direction === -1){
+
+        showStatus(
+          "هذا الزبون غير موجود.\n" +
+          "ما يصير نخصم نقاط من زبون غير مسجل.",
+          true
+        );
+
+        return;
+      }
+
+
+      /*
+         إضافة زبون جديد
+      */
+
+      await supabaseRequest(
+        "customers",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            shop_id:SHOP_ID,
+            name:name,
+            phone:phone,
+            points:points
+          })
+        }
+      );
+
+
+      showStatus(
+        "تم تسجيل الزبون الجديد.\n" +
+        "تمت إضافة " +
+        points +
+        " نقطة.",
+        false
+      );
+
+    }
+
+
+    /*
+       تنظيف خانة النقاط
+    */
+
+    document.getElementById("points")
+      .value = "";
+
+
+    /*
+       إعادة تحميل الزبائن من قاعدة البيانات
+    */
+
+    await loadCustomers();
+
+
+    /*
+       إعادة تحديث البحث
+    */
+
+    searchCustomers();
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    showStatus(
+      "حدث خطأ أثناء العملية:\n\n" +
+      error.message,
+      true
+    );
+
+  }
 
 }
 
 
-try{
+/* =====================================================
+   رسالة الحالة
+===================================================== */
 
-/*
-نبحث عن الزبون بواسطة
-رقم الهاتف + المحل
-*/
+function showStatus(message, isError){
 
-const found =
-await supabaseRequest(
-"customers?shop_id=eq." +
-SHOP_ID +
-"&phone=eq." +
-encodeURIComponent(phone) +
-"&select=id,name,phone,points"
-);
+  const status =
+    document.getElementById("status");
 
 
-let customer;
+  status.textContent =
+    message;
 
 
-if(found.length){
-
-customer =
-found[0];
-
-const oldPoints =
-Number(customer.points || 0);
-
-const newPoints =
-Math.max(
-0,
-oldPoints + direction * points
-);
-
-
-/*
-تحديث رصيد الزبون
-*/
-
-await supabaseRequest(
-"customers?id=eq." +
-customer.id +
-"&shop_id=eq." +
-SHOP_ID,
-{
-method:"PATCH",
-
-body:JSON.stringify({
-name:name,
-phone:phone,
-points:newPoints
-})
-}
-);
-
-
-/*
-إظهار النتيجة
-*/
-
-showStatus(
-direction === 1
-?
-`تمت إضافة ${points} نقطة. الرصيد الجديد: ${newPoints}`
-:
-`تم خصم ${points} نقطة. الرصيد الجديد: ${newPoints}`,
-false
-);
-
-}
-else{
-
-/*
-إذا الزبون غير موجود:
-الإضافة تنشئ زبون جديد
-*/
-
-if(direction === -1){
-
-showStatus(
-"هذا الزبون غير موجود، ما يصير خصم منه.",
-true
-);
-
-return;
+  status.className =
+    "status " +
+    (isError ? "error" : "ok");
 
 }
 
 
-const created =
-await supabaseRequest(
-"customers",
-{
-method:"POST",
+/* =====================================================
+   حماية النصوص
+===================================================== */
 
-body:JSON.stringify({
-shop_id:SHOP_ID,
-name:name,
-phone:phone,
-points:points
-})
+function escapeHtml(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
 }
-);
 
 
-const newPoints =
-Number(created?.
+/* =====================================================
+   تشغيل الصفحة
+===================================================== */
+
+loadCustomers();
+
+</script>
+
+</body>
+</html>
