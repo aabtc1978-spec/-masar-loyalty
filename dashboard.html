@@ -3,139 +3,47 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>مسار | لوحة التحكم</title>
+<title>مسار | لوحة صاحب المحل</title>
 
 <style>
-body{
-margin:0;
-background:#f5f6fa;
-color:#202124;
-font-family:Arial,sans-serif
-}
+body{margin:0;background:#f5f6fa;color:#202124;font-family:Arial,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:20px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.muted{color:#777;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 3px 16px #0000000d}
+.num{font-size:30px;font-weight:700;margin-top:8px}
+input,button{width:100%;padding:12px;border-radius:10px;margin-top:9px;font-size:15px;box-sizing:border-box}
+input{border:1px solid #ddd}
+button{border:0;background:#111;color:#fff}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.customer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eee;padding:12px 0}
+.badge{padding:5px 9px;border-radius:20px;background:#eee}
 
-.wrap{
-max-width:1000px;
-margin:auto;
-padding:20px
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px
-}
-
-h1{margin:0}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-margin-bottom:20px
-}
-
-.card{
-background:#fff;
-border-radius:14px;
-padding:20px;
-box-shadow:0 2px 10px #00000012;
-margin-bottom:16px
-}
-
-.num{
-font-size:30px;
-font-weight:bold;
-margin-top:8px
-}
-
-.muted{
-color:#777
-}
-
-input,button{
-width:100%;
-box-sizing:border-box;
-padding:14px;
-margin-top:10px;
-border-radius:8px;
-font-size:16px
-}
-
-input{
-border:1px solid #ddd
-}
-
-button{
-border:0;
-background:#222;
-color:#fff;
-cursor:pointer
-}
-
-.row{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px
-}
-
-.customer{
+.search-result{
 display:flex;
 justify-content:space-between;
 align-items:center;
 border-top:1px solid #eee;
-padding:12px 0
+padding:12px 0;
+cursor:pointer;
 }
 
-.points{
-font-weight:bold;
-font-size:20px
+.search-result:hover{
+background:#f7f7f7;
 }
 
-#status{
-margin-top:12px;
-font-weight:bold
+.search-box{
+margin-bottom:8px;
 }
 
-/* سجل العمليات */
-
-.history-item{
-border-top:1px solid #eee;
-padding:14px 0
-}
-
-.history-add{
-color:green;
-font-weight:bold;
-margin-top:6px
-}
-
-.history-remove{
-color:red;
-font-weight:bold;
-margin-top:6px
-}
-
-.history-time{
-font-size:13px;
-color:#888;
-margin-top:6px
+#searchResults:empty{
+display:none;
 }
 
 @media(max-width:650px){
-
-.grid{
-grid-template-columns:1fr
-}
-
-.row{
-grid-template-columns:1fr
-}
-
-.top{
-display:block
-}
-
+.grid{grid-template-columns:1fr}
+.row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -145,8 +53,11 @@ display:block
 <div class="wrap">
 
 <div class="top">
+<div>
 <div class="muted">مسار • لوحة التحكم</div>
-<h1>مسار التجريبي</h1>
+<h1>محل مسار التجريبي</h1>
+</div>
+<div class="badge">تجريبي</div>
 </div>
 
 
@@ -170,6 +81,26 @@ display:block
 </div>
 
 
+<!-- البحث -->
+
+<div class="card">
+
+<h2>البحث عن زبون سابق</h2>
+
+<input
+id="searchName"
+class="search-box"
+placeholder="اكتب اسم الزبون للبحث"
+oninput="searchCustomers()"
+>
+
+<div id="searchResults"></div>
+
+</div>
+
+
+<!-- إضافة وخصم -->
+
 <div class="card">
 
 <h2>إضافة زبون / تحديث نقاط</h2>
@@ -182,50 +113,54 @@ placeholder="اسم الزبون"
 <input
 id="phone"
 placeholder="رقم الهاتف"
-inputmode="tel"
 >
 
 <input
 id="points"
 type="number"
-min="1"
 placeholder="عدد النقاط"
 >
 
 <div class="row">
 
-<button onclick="changePoints('add')">
+<button onclick="change(1)">
 إضافة نقاط
 </button>
 
-<button onclick="changePoints('remove')">
+<button onclick="change(-1)">
 خصم نقاط
 </button>
 
 </div>
 
-<div id="status"></div>
-
 </div>
 
+
+<!-- الزبائن -->
 
 <div class="card">
 
 <h2>الزبائن</h2>
 
-<div id="list">
-جاري التحميل...
-</div>
+<div id="list"></div>
 
 </div>
 
+
+<!-- المكافآت -->
 
 <div class="card">
 
-<h2>آخر عمليات النقاط</h2>
+<h2>المكافآت</h2>
 
-<div id="history">
-جاري التحميل...
+<div class="customer">
+<span>خصم 10%</span>
+<b>100 نقطة</b>
+</div>
+
+<div class="customer">
+<span>هدية مجانية</span>
+<b>200 نقطة</b>
 </div>
 
 </div>
@@ -235,249 +170,167 @@ placeholder="عدد النقاط"
 
 <script>
 
-const SUPABASE_URL =
-"https://zobsoaasyuqtqniwfcyd.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7";
-
-const SHOP_ID = 1;
+let customers =
+JSON.parse(
+localStorage.getItem('masar_customers') || '{}'
+);
 
 
 /* =========================
-   Supabase
+   عرض الزبائن
 ========================= */
 
-async function supabaseRequest(path, options = {}){
+function render(){
 
-const response = await fetch(
-SUPABASE_URL + "/rest/v1/" + path,
-{
-...options,
+let a =
+Object.entries(customers);
 
-headers:{
-"apikey":SUPABASE_KEY,
-"Authorization":"Bearer " + SUPABASE_KEY,
-"Content-Type":"application/json",
-"Accept":"application/json",
-...(options.headers || {})
-}
-}
+count.textContent =
+a.length;
+
+total.textContent =
+a.reduce(
+(s,[,c]) => s + Number(c.points || 0),
+0
 );
-
-const text = await response.text();
-
-let data = null;
-
-try{
-
-data = text ? JSON.parse(text) : null;
-
-}catch{
-
-data = text;
-
-}
-
-if(!response.ok){
-
-throw new Error(
-typeof data === "string"
-? data
-: JSON.stringify(data)
-);
-
-}
-
-return data;
-
-}
-
-
-/* =========================
-   تحميل الزبائن
-========================= */
-
-async function render(){
-
-const list =
-document.getElementById("list");
-
-try{
-
-const customers =
-await supabaseRequest(
-"customers" +
-"?select=id,name,phone,points" +
-"&shop_id=eq." + SHOP_ID +
-"&order=id.desc"
-);
-
-document.getElementById("count")
-.textContent = customers.length;
-
-let total = 0;
-
-customers.forEach(c=>{
-
-total += Number(c.points || 0);
-
-});
-
-document.getElementById("total")
-.textContent = total;
-
-if(!customers.length){
 
 list.innerHTML =
-"لا يوجد زبائن حالياً";
+a.length
 
-return;
-
-}
-
-list.innerHTML =
-customers.map(c=>`
+? a.map(([p,c]) => `
 
 <div class="customer">
 
-<div>
+<span>
 
-<strong>
-${escapeHtml(c.name || "")}
-</strong>
+<b>
+${escapeHtml(c.name)}
+</b>
 
-<div class="muted">
-${escapeHtml(c.phone || "")}
-</div>
+<br>
 
-</div>
+<small>
+${escapeHtml(p)}
+</small>
 
-<div class="points">
+</span>
+
+<b>
 ${Number(c.points || 0)} نقطة
-</div>
+</b>
 
 </div>
 
-`).join("");
+`).join('')
 
-}catch(error){
-
-console.error(error);
-
-list.innerHTML =
-"<b>تعذر تحميل الزبائن</b><br>" +
-escapeHtml(error.message);
-
-}
+: '<div class="muted">لا يوجد زبائن بعد.</div>';
 
 }
 
 
 /* =========================
-   تحميل سجل العمليات
+   البحث
 ========================= */
 
-async function loadHistory(){
+function searchCustomers(){
 
-const history =
-document.getElementById("history");
+let q =
+searchName.value
+.trim()
+.toLowerCase();
 
-try{
 
-const rows =
-await supabaseRequest(
-"points_history" +
-"?select=id,created_at,customer_id,customer_name,customer_phone,points,action" +
-"&shop_id=eq." + SHOP_ID +
-"&order=id.desc" +
-"&limit=30"
-);
+if(!q){
 
-if(!rows.length){
-
-history.innerHTML =
-"لا توجد عمليات بعد";
+searchResults.innerHTML = '';
 
 return;
 
 }
 
-history.innerHTML =
-rows.map(row=>{
 
-const isAdd =
-row.action === "add";
+let matches =
+Object.entries(customers)
+.filter(([p,c]) =>
 
-const actionText =
-isAdd ? "إضافة" : "خصم";
+String(c.name || '')
+.toLowerCase()
+.includes(q)
 
-const sign =
-isAdd ? "+" : "-";
+);
 
-const actionClass =
-isAdd
-? "history-add"
-: "history-remove";
 
-let time = "";
+if(!matches.length){
 
-if(row.created_at){
+searchResults.innerHTML =
+'<div class="muted">لا يوجد زبون بهذا الاسم.</div>';
 
-const date =
-new Date(row.created_at);
-
-time =
-date.toLocaleString("ar-IQ",{
-year:"numeric",
-month:"2-digit",
-day:"2-digit",
-hour:"2-digit",
-minute:"2-digit"
-});
+return;
 
 }
 
-return `
 
-<div class="history-item">
+searchResults.innerHTML =
+matches.map(([p,c]) => `
 
-<strong>
-${escapeHtml(
-row.customer_name || "بدون اسم"
-)}
-</strong>
+<div
+class="search-result"
+onclick="selectCustomer('${escapeJs(p)}')"
+>
 
-<div class="muted">
-${escapeHtml(
-row.customer_phone || "بدون رقم"
-)}
+<span>
+
+<b>
+${escapeHtml(c.name)}
+</b>
+
+<br>
+
+<small>
+${escapeHtml(p)}
+</small>
+
+</span>
+
+<b>
+${Number(c.points || 0)} نقطة
+</b>
+
 </div>
 
-<div class="${actionClass}">
-${actionText}:
-${sign}${Number(row.points || 0)} نقطة
-</div>
-
-<div class="history-time">
-${escapeHtml(time)}
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}catch(error){
-
-console.error(error);
-
-history.innerHTML =
-"<b>تعذر تحميل السجل</b><br>" +
-escapeHtml(error.message);
+`).join('');
 
 }
+
+
+/* =========================
+   اختيار الزبون
+========================= */
+
+function selectCustomer(phone){
+
+let c =
+customers[phone];
+
+if(!c)
+return;
+
+
+name.value =
+c.name || '';
+
+document.getElementById('phone')
+.value =
+phone;
+
+
+searchName.value = '';
+
+searchResults.innerHTML = '';
+
+
+document.getElementById('points')
+.focus();
 
 }
 
@@ -486,234 +339,64 @@ escapeHtml(error.message);
    إضافة / خصم
 ========================= */
 
-async function changePoints(action){
+function change(dir){
 
-const name =
-document.getElementById("name")
-.value.trim();
+let n =
+name.value.trim();
 
-const phone =
-document.getElementById("phone")
-.value.trim();
+let p =
+phone.value.trim();
 
-const value =
-Number(
-document.getElementById("points")
-.value
+let v =
+Number(points.value);
+
+
+if(!n || !p || !v){
+
+alert(
+'أدخل الاسم والرقم والنقاط'
 );
-
-const status =
-document.getElementById("status");
-
-
-if(!name || !phone || !value || value <= 0){
-
-status.textContent =
-"اكتب الاسم ورقم الهاتف وعدد النقاط";
-
-return;
-
-}
-
-status.textContent =
-"جاري الحفظ...";
-
-
-try{
-
-
-/* =========================
-   البحث عن الزبون
-========================= */
-
-const found =
-await supabaseRequest(
-"customers" +
-"?select=id,name,phone,points" +
-"&shop_id=eq." + SHOP_ID +
-"&phone=eq." +
-encodeURIComponent(phone) +
-"&limit=1"
-);
-
-
-let customer;
-
-
-/* =========================
-   زبون موجود
-========================= */
-
-if(found.length > 0){
-
-customer = found[0];
-
-const oldPoints =
-Number(customer.points || 0);
-
-let newPoints;
-
-
-/* إضافة */
-
-if(action === "add"){
-
-newPoints =
-oldPoints + value;
-
-}
-
-
-/* خصم */
-
-else{
-
-newPoints =
-Math.max(
-0,
-oldPoints - value
-);
-
-}
-
-
-/* تحديث النقاط */
-
-await supabaseRequest(
-"customers?id=eq." + customer.id,
-{
-method:"PATCH",
-
-headers:{
-"Prefer":"return=minimal"
-},
-
-body:JSON.stringify({
-
-points:newPoints
-
-})
-}
-);
-
-}
-
-
-/* =========================
-   زبون جديد
-========================= */
-
-else{
-
-if(action === "remove"){
-
-status.textContent =
-"الزبون غير موجود، لا يمكن خصم نقاط.";
 
 return;
 
 }
 
 
-const inserted =
-await supabaseRequest(
-"customers",
-{
-method:"POST",
+if(!customers[p]){
 
-headers:{
-"Prefer":"return=representation"
-},
+customers[p] = {
 
-body:JSON.stringify({
+name:n,
 
-shop_id:SHOP_ID,
-
-name:name,
-
-phone:phone,
-
-points:value
-
-})
-}
-);
-
-customer = inserted[0];
-
-}
-
-
-/* =========================
-   بيانات السجل
-========================= */
-
-const historyData = {
-
-shop_id:SHOP_ID,
-
-customer_id:customer.id,
-
-customer_name:
-customer.name || name,
-
-customer_phone:
-customer.phone || phone,
-
-points:value,
-
-action:action
+points:0
 
 };
 
-
-/* =========================
-   حفظ السجل
-========================= */
-
-await supabaseRequest(
-"points_history",
-{
-method:"POST",
-
-headers:{
-"Prefer":"return=representation"
-},
-
-body:JSON.stringify(historyData)
-
 }
+
+
+customers[p].name =
+n;
+
+
+customers[p].points =
+Math.max(
+0,
+Number(customers[p].points || 0)
++
+dir * v
 );
 
 
-/* =========================
-   نجاح
-========================= */
-
-status.textContent =
-action === "add"
-? "✅ تمت إضافة النقاط وحفظ السجل"
-: "✅ تم خصم النقاط وحفظ السجل";
+localStorage.setItem(
+'masar_customers',
+JSON.stringify(customers)
+);
 
 
-document.getElementById("points")
-.value = "";
+points.value = '';
 
-
-await render();
-
-await loadHistory();
-
-
-}catch(error){
-
-console.error(error);
-
-status.innerHTML =
-"❌ حدث خطأ:<br>" +
-escapeHtml(error.message);
-
-}
+render();
 
 }
 
@@ -726,11 +409,30 @@ function escapeHtml(value){
 
 return String(value)
 
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
+.replaceAll('&','&amp;')
+
+.replaceAll('<','&lt;')
+
+.replaceAll('>','&gt;')
+
+.replaceAll('"','&quot;')
+
 .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================
+   حماية رقم الهاتف
+========================= */
+
+function escapeJs(value){
+
+return String(value)
+
+.replaceAll('\\','\\\\')
+
+.replaceAll("'","\\'");
 
 }
 
@@ -739,15 +441,7 @@ return String(value)
    تشغيل
 ========================= */
 
-async function start(){
-
-await render();
-
-await loadHistory();
-
-}
-
-start();
+render();
 
 </script>
 
