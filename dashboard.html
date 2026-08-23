@@ -188,6 +188,46 @@ button.red{
   padding:12px 0;
 }
 
+.history-item{
+  border-top:1px solid #eee;
+  padding:14px 4px;
+}
+
+.history-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.history-name{
+  font-weight:bold;
+  font-size:17px;
+}
+
+.history-phone{
+  color:#777;
+  margin-top:5px;
+  direction:ltr;
+  text-align:right;
+}
+
+.history-meta{
+  color:#777;
+  font-size:13px;
+  margin-top:7px;
+}
+
+.history-add{
+  color:#067647;
+  font-weight:bold;
+}
+
+.history-remove{
+  color:#b42318;
+  font-weight:bold;
+}
+
 @media(max-width:650px){
 
   .grid{
@@ -218,8 +258,6 @@ button.red{
 
 <div class="wrap">
 
-  <!-- رأس الصفحة -->
-
   <div class="top">
 
     <div>
@@ -232,9 +270,6 @@ button.red{
     </div>
 
   </div>
-
-
-  <!-- الإحصائيات -->
 
   <div class="grid">
 
@@ -255,9 +290,6 @@ button.red{
 
   </div>
 
-
-  <!-- البحث -->
-
   <div class="card">
 
     <h2>🔎 البحث عن زبون سابق</h2>
@@ -272,9 +304,6 @@ button.red{
     <div id="searchResults"></div>
 
   </div>
-
-
-  <!-- إضافة وخصم -->
 
   <div class="card">
 
@@ -322,9 +351,6 @@ button.red{
 
   </div>
 
-
-  <!-- قائمة الزبائن -->
-
   <div class="card">
 
     <h2>الزبائن</h2>
@@ -335,8 +361,25 @@ button.red{
 
   </div>
 
+  <div class="card">
 
-  <!-- المكافآت -->
+    <div class="top">
+      <h2>سجل النقاط</h2>
+
+      <button
+        type="button"
+        style="width:auto;margin-top:0;padding:9px 14px"
+        onclick="loadHistory()"
+      >
+        تحديث
+      </button>
+    </div>
+
+    <div id="history" class="loading">
+      جارِ تحميل سجل النقاط...
+    </div>
+
+  </div>
 
   <div class="card">
 
@@ -355,8 +398,6 @@ button.red{
   </div>
 
 </div>
-
-
 <script>
 
 /* =====================================================
@@ -369,9 +410,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7";
 
-/*
-   رقم المحل الموجود عندك في جدول customers
-*/
 const SHOP_ID = 1;
 
 
@@ -419,15 +457,19 @@ async function supabaseRequest(endpoint, options = {}){
     let message = "";
 
     if(typeof data === "object" && data !== null){
+
       message =
         data.message ||
         data.msg ||
         data.hint ||
         data.details ||
         JSON.stringify(data);
+
     }
     else{
+
       message = String(data);
+
     }
 
     throw new Error(
@@ -436,14 +478,16 @@ async function supabaseRequest(endpoint, options = {}){
       ":\n" +
       message
     );
+
   }
 
   return data;
+
 }
 
 
 /* =====================================================
-   تحميل الزبائن من Supabase
+   تحميل الزبائن
 ===================================================== */
 
 async function loadCustomers(){
@@ -525,6 +569,7 @@ function renderCustomers(){
       "لا يوجد زبائن.";
 
     return;
+
   }
 
 
@@ -575,7 +620,7 @@ function renderCustomers(){
 
 
 /* =====================================================
-   البحث عن الزبون بالاسم
+   البحث بالاسم
 ===================================================== */
 
 function searchCustomers(){
@@ -598,6 +643,7 @@ function searchCustomers(){
     results.innerHTML = "";
 
     return;
+
   }
 
 
@@ -617,14 +663,9 @@ function searchCustomers(){
       '<div class="empty">ماكو زبون بهذا الاسم.</div>';
 
     return;
+
   }
 
-
-  /*
-     كل اسم يظهر مقابله رقمه.
-     إذا عندنا أكثر من شخص بنفس الاسم
-     راح يظهرون كلهم.
-  */
 
   results.innerHTML =
     matches
@@ -678,7 +719,7 @@ function searchCustomers(){
 
 
 /* =====================================================
-   اختيار زبون من نتائج البحث
+   اختيار زبون
 ===================================================== */
 
 function selectCustomer(id){
@@ -774,11 +815,6 @@ async function changePoints(direction){
 
   try{
 
-    /*
-       نبحث عن الزبون بواسطة:
-       المحل + رقم الهاتف
-    */
-
     const found =
       await supabaseRequest(
         "customers" +
@@ -788,10 +824,6 @@ async function changePoints(direction){
         "&select=id,name,phone,points"
       );
 
-
-    /*
-       إذا الزبون موجود
-    */
 
     if(found.length > 0){
 
@@ -809,10 +841,6 @@ async function changePoints(direction){
         );
 
 
-      /*
-         تحديث الاسم والرقم والنقاط
-      */
-
       await supabaseRequest(
         "customers" +
         "?id=eq." + customer.id +
@@ -826,6 +854,19 @@ async function changePoints(direction){
             points:newPoints
           })
         }
+      );
+
+
+      /*
+         تسجيل العملية في points_history
+      */
+
+      await addHistory(
+        customer.id,
+        name,
+        phone,
+        points,
+        direction === 1 ? "add" : "remove"
       );
 
 
@@ -857,18 +898,7 @@ async function changePoints(direction){
       }
 
     }
-
-
-    /*
-       إذا الزبون غير موجود
-    */
-
     else{
-
-      /*
-         لا نسمح بإنشاء زبون
-         عن طريق الخصم
-      */
 
       if(direction === -1){
 
@@ -879,25 +909,42 @@ async function changePoints(direction){
         );
 
         return;
+
       }
 
 
+      const created =
+        await supabaseRequest(
+          "customers",
+          {
+            method:"POST",
+
+            body:JSON.stringify({
+              shop_id:SHOP_ID,
+              name:name,
+              phone:phone,
+              points:points
+            })
+          }
+        );
+
+
+      const newCustomer =
+        Array.isArray(created)
+          ? created[0]
+          : created;
+
+
       /*
-         إضافة زبون جديد
+         تسجيل إضافة الزبون الجديد
       */
 
-      await supabaseRequest(
-        "customers",
-        {
-          method:"POST",
-
-          body:JSON.stringify({
-            shop_id:SHOP_ID,
-            name:name,
-            phone:phone,
-            points:points
-          })
-        }
+      await addHistory(
+        newCustomer.id,
+        name,
+        phone,
+        points,
+        "add"
       );
 
 
@@ -912,26 +959,13 @@ async function changePoints(direction){
     }
 
 
-    /*
-       تنظيف خانة النقاط
-    */
-
     document.getElementById("points")
       .value = "";
 
 
-    /*
-       إعادة تحميل الزبائن من قاعدة البيانات
-    */
-
     await loadCustomers();
 
-
-    /*
-       إعادة تحديث البحث
-    */
-
-    searchCustomers();
+    await loadHistory();
 
   }
   catch(error){
@@ -950,10 +984,236 @@ async function changePoints(direction){
 
 
 /* =====================================================
+   إضافة سجل إلى points_history
+===================================================== */
+
+async function addHistory(
+  customerId,
+  customerName,
+  customerPhone,
+  points,
+  action
+){
+
+  try{
+
+    await supabaseRequest(
+      "points_history",
+      {
+        method:"POST",
+
+        body:JSON.stringify({
+
+          shop_id:SHOP_ID,
+
+          customer_id:customerId,
+
+          customer_name:customerName,
+
+          customer_phone:customerPhone,
+
+          points:Number(points),
+
+          action:action
+
+        })
+      }
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "History error:",
+      error
+    );
+
+    /*
+       إذا فشل السجل، لا نرجع
+       عملية النقاط نفسها.
+    */
+
+    showStatus(
+      "تم تحديث النقاط، لكن تعذر تسجيل العملية في History:\n\n" +
+      error.message,
+      true
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   تحميل History
+===================================================== */
+
+async function loadHistory(){
+
+  const history =
+    document.getElementById("history");
+
+  history.className = "loading";
+
+  history.textContent =
+    "جارِ تحميل سجل النقاط...";
+
+
+  try{
+
+    const rows =
+      await supabaseRequest(
+        "points_history" +
+        "?shop_id=eq." + SHOP_ID +
+        "&select=id,created_at,shop_id,customer_id,customer_name,customer_phone,points,action" +
+        "&order=created_at.desc" +
+        "&limit=100"
+      );
+
+
+    if(!Array.isArray(rows) || rows.length === 0){
+
+      history.className = "empty";
+
+      history.textContent =
+        "لا يوجد سجل نقاط حاليًا.";
+
+      return;
+
+    }
+
+
+    history.className = "";
+
+
+    history.innerHTML =
+      rows
+        .map(row => {
+
+          const name =
+            escapeHtml(
+              row.customer_name || ""
+            );
+
+          const phone =
+            escapeHtml(
+              row.customer_phone || ""
+            );
+
+          const points =
+            Number(row.points || 0);
+
+          const isAdd =
+            row.action === "add";
+
+
+          const actionText =
+            isAdd
+              ? "إضافة"
+              : "خصم";
+
+
+          const actionClass =
+            isAdd
+              ? "history-add"
+              : "history-remove";
+
+
+          const date =
+            formatDate(row.created_at);
+
+
+          return `
+
+            <div class="history-item">
+
+              <div class="history-top">
+
+                <div>
+
+                  <div class="history-name">
+                    ${name}
+                  </div>
+
+                  <div class="history-phone">
+                    ${phone}
+                  </div>
+
+                </div>
+
+                <div class="${actionClass}">
+                  ${isAdd ? "+" : "-"}${points}
+                </div>
+
+              </div>
+
+              <div class="history-meta">
+                ${actionText} • ${date}
+              </div>
+
+            </div>
+
+          `;
+
+        })
+        .join("");
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    history.className = "empty";
+
+    history.innerHTML =
+      "تعذر تحميل History.<br><br>" +
+      "<b>الخطأ:</b><br>" +
+      escapeHtml(error.message);
+
+  }
+
+}
+
+
+/* =====================================================
+   تنسيق التاريخ والوقت
+===================================================== */
+
+function formatDate(value){
+
+  if(!value){
+    return "";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(Number.isNaN(date.getTime())){
+    return value;
+  }
+
+
+  return date.toLocaleString(
+    "ar-IQ",
+    {
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+/* =====================================================
    رسالة الحالة
 ===================================================== */
 
-function showStatus(message, isError){
+function showStatus(message,isError){
 
   const status =
     document.getElementById("status");
@@ -992,7 +1252,8 @@ function escapeHtml(value){
 
 loadCustomers();
 
-</script>
+loadHistory();
 
+</script>
 </body>
 </html>
