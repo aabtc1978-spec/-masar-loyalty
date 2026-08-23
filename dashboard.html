@@ -82,9 +82,6 @@ font-weight:bold
 border-top:1px solid #eee;
 padding:12px 0
 }
-.add{font-weight:bold}
-.remove{font-weight:bold}
-
 @media(max-width:650px){
 .grid{grid-template-columns:1fr}
 .row{grid-template-columns:1fr}
@@ -133,11 +130,11 @@ padding:12px 0
 
 <div class="row">
 
-<button onclick="changePoints(1)">
+<button onclick="changePoints('add')">
 إضافة نقاط
 </button>
 
-<button onclick="changePoints(-1)">
+<button onclick="changePoints('remove')">
 خصم نقاط
 </button>
 
@@ -168,7 +165,6 @@ padding:12px 0
 </div>
 
 </div>
-
 
 <script>
 
@@ -212,13 +208,11 @@ data = text;
 }
 
 if(!response.ok){
-
 throw new Error(
 typeof data === "string"
 ? data
 : JSON.stringify(data)
 );
-
 }
 
 return data;
@@ -227,7 +221,7 @@ return data;
 
 
 /* =========================
-   الزبائن
+   تحميل الزبائن
 ========================= */
 
 async function render(){
@@ -240,7 +234,7 @@ try{
 const customers =
 await supabaseRequest(
 "customers" +
-"?select=id,name,phone,points,created_at" +
+"?select=id,name,phone,points" +
 "&shop_id=eq." + SHOP_ID +
 "&order=id.desc"
 );
@@ -250,8 +244,8 @@ document.getElementById("count")
 
 let total = 0;
 
-customers.forEach(customer=>{
-total += Number(customer.points || 0);
+customers.forEach(c=>{
+total += Number(c.points || 0);
 });
 
 document.getElementById("total")
@@ -263,28 +257,25 @@ list.innerHTML =
 "لا يوجد زبائن حالياً";
 
 return;
-
 }
 
 list.innerHTML =
-customers.map(customer=>`
+customers.map(c=>`
 
 <div class="customer">
 
 <div>
-
 <strong>
-${escapeHtml(customer.name || "")}
+${escapeHtml(c.name || "")}
 </strong>
 
 <div class="muted">
-${escapeHtml(customer.phone || "")}
+${escapeHtml(c.phone || "")}
 </div>
-
 </div>
 
 <div class="points">
-${Number(customer.points || 0)} نقطة
+${Number(c.points || 0)} نقطة
 </div>
 
 </div>
@@ -292,8 +283,6 @@ ${Number(customer.points || 0)} نقطة
 `).join("");
 
 }catch(error){
-
-console.error(error);
 
 list.innerHTML =
 "<b>تعذر تحميل الزبائن</b><br>" +
@@ -305,7 +294,7 @@ escapeHtml(error.message);
 
 
 /* =========================
-   سجل العمليات
+   تحميل السجل
 ========================= */
 
 async function loadHistory(){
@@ -330,20 +319,13 @@ history.innerHTML =
 "لا توجد عمليات بعد";
 
 return;
-
 }
 
 history.innerHTML =
 rows.map(row=>{
 
-const isAdd =
+const add =
 row.action === "add";
-
-const text =
-isAdd ? "إضافة" : "خصم";
-
-const sign =
-isAdd ? "+" : "-";
 
 return `
 
@@ -362,9 +344,9 @@ row.customer_phone || "بدون رقم"
 </div>
 
 <div>
-${text}:
+${add ? "إضافة" : "خصم"}:
 <b>
-${sign}${Number(row.points || 0)}
+${add ? "+" : "-"}${Number(row.points || 0)}
 </b>
 نقطة
 </div>
@@ -377,10 +359,8 @@ ${sign}${Number(row.points || 0)}
 
 }catch(error){
 
-console.error(error);
-
 history.innerHTML =
-"<b>تعذر تحميل سجل العمليات</b><br>" +
+"<b>تعذر تحميل السجل</b><br>" +
 escapeHtml(error.message);
 
 }
@@ -392,7 +372,7 @@ escapeHtml(error.message);
    إضافة / خصم
 ========================= */
 
-async function changePoints(direction){
+async function changePoints(action){
 
 const name =
 document.getElementById("name")
@@ -418,7 +398,6 @@ status.textContent =
 "اكتب الاسم ورقم الهاتف وعدد النقاط";
 
 return;
-
 }
 
 status.textContent =
@@ -427,9 +406,7 @@ status.textContent =
 
 try{
 
-/* =========================
-   البحث عن الزبون
-========================= */
+/* البحث */
 
 const found =
 await supabaseRequest(
@@ -445,7 +422,7 @@ let customer;
 
 
 /* =========================
-   زبون موجود
+   موجود
 ========================= */
 
 if(found.length > 0){
@@ -455,11 +432,30 @@ customer = found[0];
 const oldPoints =
 Number(customer.points || 0);
 
-const newPoints =
+let newPoints;
+
+
+/* إضافة */
+
+if(action === "add"){
+
+newPoints =
+oldPoints + value;
+
+}
+
+
+/* خصم */
+
+else{
+
+newPoints =
 Math.max(
 0,
-oldPoints + (direction * value)
+oldPoints - value
 );
+
+}
 
 
 /* تحديث النقاط */
@@ -468,55 +464,46 @@ await supabaseRequest(
 "customers?id=eq." + customer.id,
 {
 method:"PATCH",
-
 headers:{
-"Prefer":"return=representation"
+"Prefer":"return=minimal"
 },
-
 body:JSON.stringify({
 points:newPoints
 })
 }
 );
 
-customer.points = newPoints;
-
 }
 
 
 /* =========================
-   زبون جديد
+   جديد
 ========================= */
 
 else{
 
-if(direction < 0){
+if(action === "remove"){
 
 status.textContent =
 "الزبون غير موجود، لا يمكن خصم نقاط.";
 
 return;
-
 }
+
 
 const inserted =
 await supabaseRequest(
 "customers",
 {
 method:"POST",
-
 headers:{
 "Prefer":"return=representation"
 },
-
 body:JSON.stringify({
 
 shop_id:SHOP_ID,
-
 name:name,
-
 phone:phone,
-
 points:value
 
 })
@@ -529,21 +516,28 @@ customer = inserted[0];
 
 
 /* =========================
-   الاسم والرقم
+   حفظ history
 ========================= */
 
-const historyName =
-customer.name || name;
+const historyData = {
 
-const historyPhone =
-customer.phone || phone;
+shop_id:SHOP_ID,
+
+customer_id:customer.id,
+
+customer_name:
+customer.name || name,
+
+customer_phone:
+customer.phone || phone,
+
+points:value,
+
+action:action
+
+};
 
 
-/* =========================
-   حفظ سجل العملية
-========================= */
-
-const historyResult =
 await supabaseRequest(
 "points_history",
 {
@@ -553,50 +547,23 @@ headers:{
 "Prefer":"return=representation"
 },
 
-body:JSON.stringify({
+body:JSON.stringify(historyData)
 
-shop_id:SHOP_ID,
-
-customer_id:customer.id,
-
-customer_name:historyName,
-
-customer_phone:historyPhone,
-
-points:value,
-
-action:
-direction === 1
-? "add"
-: "remove"
-
-})
 }
 );
 
 
-/* التأكد أن السجل انحفظ */
-
-if(!historyResult){
-
-throw new Error(
-"تم تحديث النقاط لكن لم يتم تأكيد حفظ سجل العملية."
-);
-
-}
-
-
-/* =========================
-   نجاح
-========================= */
+/* نجاح */
 
 status.textContent =
-direction === 1
+action === "add"
 ? "✅ تمت إضافة النقاط وحفظ السجل"
 : "✅ تم خصم النقاط وحفظ السجل";
 
+
 document.getElementById("points")
 .value = "";
+
 
 await render();
 
@@ -623,7 +590,6 @@ escapeHtml(error.message);
 function escapeHtml(value){
 
 return String(value)
-
 .replaceAll("&","&amp;")
 .replaceAll("<","&lt;")
 .replaceAll(">","&gt;")
