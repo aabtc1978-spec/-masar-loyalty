@@ -12,24 +12,29 @@ background:#f5f6fa;
 color:#202124;
 font-family:Arial,sans-serif
 }
+
 .wrap{
 max-width:1000px;
 margin:auto;
 padding:20px
 }
+
 .top{
 display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:20px
 }
+
 h1{margin:0}
+
 .grid{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:12px;
 margin-bottom:20px
 }
+
 .card{
 background:#fff;
 border-radius:14px;
@@ -37,12 +42,17 @@ padding:20px;
 box-shadow:0 2px 10px #00000012;
 margin-bottom:16px
 }
+
 .num{
 font-size:30px;
 font-weight:bold;
 margin-top:8px
 }
-.muted{color:#777}
+
+.muted{
+color:#777
+}
+
 input,button{
 width:100%;
 box-sizing:border-box;
@@ -51,18 +61,24 @@ margin-top:10px;
 border-radius:8px;
 font-size:16px
 }
-input{border:1px solid #ddd}
+
+input{
+border:1px solid #ddd
+}
+
 button{
 border:0;
 background:#222;
 color:#fff;
 cursor:pointer
 }
+
 .row{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:10px
 }
+
 .customer{
 display:flex;
 justify-content:space-between;
@@ -70,22 +86,56 @@ align-items:center;
 border-top:1px solid #eee;
 padding:12px 0
 }
+
 .points{
 font-weight:bold;
 font-size:20px
 }
+
 #status{
 margin-top:12px;
 font-weight:bold
 }
+
+/* سجل العمليات */
+
 .history-item{
 border-top:1px solid #eee;
-padding:12px 0
+padding:14px 0
 }
+
+.history-add{
+color:#16803c;
+font-weight:bold;
+margin-top:6px
+}
+
+.history-remove{
+color:#d93025;
+font-weight:bold;
+margin-top:6px
+}
+
+.history-time{
+font-size:13px;
+color:#888;
+margin-top:6px
+}
+
 @media(max-width:650px){
-.grid{grid-template-columns:1fr}
-.row{grid-template-columns:1fr}
-.top{display:block}
+
+.grid{
+grid-template-columns:1fr
+}
+
+.row{
+grid-template-columns:1fr
+}
+
+.top{
+display:block
+}
+
 }
 </style>
 </head>
@@ -98,6 +148,7 @@ padding:12px 0
 <div class="muted">مسار • لوحة التحكم</div>
 <h1>مسار التجريبي</h1>
 </div>
+
 
 <div class="grid">
 
@@ -118,15 +169,28 @@ padding:12px 0
 
 </div>
 
+
 <div class="card">
 
 <h2>إضافة زبون / تحديث نقاط</h2>
 
-<input id="name" placeholder="اسم الزبون">
+<input
+id="name"
+placeholder="اسم الزبون"
+>
 
-<input id="phone" placeholder="رقم الهاتف" inputmode="tel">
+<input
+id="phone"
+placeholder="رقم الهاتف"
+inputmode="tel"
+>
 
-<input id="points" type="number" min="1" placeholder="عدد النقاط">
+<input
+id="points"
+type="number"
+min="1"
+placeholder="عدد النقاط"
+>
 
 <div class="row">
 
@@ -144,6 +208,7 @@ padding:12px 0
 
 </div>
 
+
 <div class="card">
 
 <h2>الزبائن</h2>
@@ -153,6 +218,7 @@ padding:12px 0
 </div>
 
 </div>
+
 
 <div class="card">
 
@@ -165,6 +231,7 @@ padding:12px 0
 </div>
 
 </div>
+
 
 <script>
 
@@ -187,6 +254,7 @@ const response = await fetch(
 SUPABASE_URL + "/rest/v1/" + path,
 {
 ...options,
+
 headers:{
 "apikey":SUPABASE_KEY,
 "Authorization":"Bearer " + SUPABASE_KEY,
@@ -202,17 +270,23 @@ const text = await response.text();
 let data = null;
 
 try{
+
 data = text ? JSON.parse(text) : null;
+
 }catch{
+
 data = text;
+
 }
 
 if(!response.ok){
+
 throw new Error(
 typeof data === "string"
 ? data
 : JSON.stringify(data)
 );
+
 }
 
 return data;
@@ -245,7 +319,9 @@ document.getElementById("count")
 let total = 0;
 
 customers.forEach(c=>{
+
 total += Number(c.points || 0);
+
 });
 
 document.getElementById("total")
@@ -257,6 +333,7 @@ list.innerHTML =
 "لا يوجد زبائن حالياً";
 
 return;
+
 }
 
 list.innerHTML =
@@ -265,6 +342,7 @@ customers.map(c=>`
 <div class="customer">
 
 <div>
+
 <strong>
 ${escapeHtml(c.name || "")}
 </strong>
@@ -272,6 +350,7 @@ ${escapeHtml(c.name || "")}
 <div class="muted">
 ${escapeHtml(c.phone || "")}
 </div>
+
 </div>
 
 <div class="points">
@@ -284,6 +363,8 @@ ${Number(c.points || 0)} نقطة
 
 }catch(error){
 
+console.error(error);
+
 list.innerHTML =
 "<b>تعذر تحميل الزبائن</b><br>" +
 escapeHtml(error.message);
@@ -294,7 +375,7 @@ escapeHtml(error.message);
 
 
 /* =========================
-   تحميل السجل
+   تحميل سجل العمليات
 ========================= */
 
 async function loadHistory(){
@@ -319,13 +400,43 @@ history.innerHTML =
 "لا توجد عمليات بعد";
 
 return;
+
 }
 
 history.innerHTML =
 rows.map(row=>{
 
-const add =
+const isAdd =
 row.action === "add";
+
+const actionText =
+isAdd ? "إضافة" : "خصم";
+
+const sign =
+isAdd ? "+" : "-";
+
+const actionClass =
+isAdd
+? "history-add"
+: "history-remove";
+
+let time = "";
+
+if(row.created_at){
+
+const date =
+new Date(row.created_at);
+
+time =
+date.toLocaleString("ar-IQ",{
+year:"numeric",
+month:"2-digit",
+day:"2-digit",
+hour:"2-digit",
+minute:"2-digit"
+});
+
+}
 
 return `
 
@@ -343,12 +454,13 @@ row.customer_phone || "بدون رقم"
 )}
 </div>
 
-<div>
-${add ? "إضافة" : "خصم"}:
-<b>
-${add ? "+" : "-"}${Number(row.points || 0)}
-</b>
-نقطة
+<div class="${actionClass}">
+${actionText}:
+${sign}${Number(row.points || 0)} نقطة
+</div>
+
+<div class="history-time">
+${escapeHtml(time)}
 </div>
 
 </div>
@@ -358,6 +470,8 @@ ${add ? "+" : "-"}${Number(row.points || 0)}
 }).join("");
 
 }catch(error){
+
+console.error(error);
 
 history.innerHTML =
 "<b>تعذر تحميل السجل</b><br>" +
@@ -398,6 +512,7 @@ status.textContent =
 "اكتب الاسم ورقم الهاتف وعدد النقاط";
 
 return;
+
 }
 
 status.textContent =
@@ -406,7 +521,10 @@ status.textContent =
 
 try{
 
-/* البحث */
+
+/* =========================
+   البحث عن الزبون
+========================= */
 
 const found =
 await supabaseRequest(
@@ -418,11 +536,12 @@ encodeURIComponent(phone) +
 "&limit=1"
 );
 
+
 let customer;
 
 
 /* =========================
-   موجود
+   زبون موجود
 ========================= */
 
 if(found.length > 0){
@@ -464,11 +583,15 @@ await supabaseRequest(
 "customers?id=eq." + customer.id,
 {
 method:"PATCH",
+
 headers:{
 "Prefer":"return=minimal"
 },
+
 body:JSON.stringify({
+
 points:newPoints
+
 })
 }
 );
@@ -477,7 +600,7 @@ points:newPoints
 
 
 /* =========================
-   جديد
+   زبون جديد
 ========================= */
 
 else{
@@ -488,6 +611,7 @@ status.textContent =
 "الزبون غير موجود، لا يمكن خصم نقاط.";
 
 return;
+
 }
 
 
@@ -496,14 +620,19 @@ await supabaseRequest(
 "customers",
 {
 method:"POST",
+
 headers:{
 "Prefer":"return=representation"
 },
+
 body:JSON.stringify({
 
 shop_id:SHOP_ID,
+
 name:name,
+
 phone:phone,
+
 points:value
 
 })
@@ -516,7 +645,7 @@ customer = inserted[0];
 
 
 /* =========================
-   حفظ history
+   بيانات السجل
 ========================= */
 
 const historyData = {
@@ -538,6 +667,10 @@ action:action
 };
 
 
+/* =========================
+   حفظ السجل
+========================= */
+
 await supabaseRequest(
 "points_history",
 {
@@ -553,7 +686,9 @@ body:JSON.stringify(historyData)
 );
 
 
-/* نجاح */
+/* =========================
+   نجاح
+========================= */
 
 status.textContent =
 action === "add"
@@ -590,6 +725,7 @@ escapeHtml(error.message);
 function escapeHtml(value){
 
 return String(value)
+
 .replaceAll("&","&amp;")
 .replaceAll("<","&lt;")
 .replaceAll(">","&gt;")
