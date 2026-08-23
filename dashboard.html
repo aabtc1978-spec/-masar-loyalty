@@ -127,7 +127,6 @@ button{
     <h1>مسار التجريبي</h1>
   </div>
 
-
   <div class="grid">
 
     <div class="card">
@@ -213,10 +212,6 @@ button{
 
 <script>
 
-/* =========================
-   Supabase
-========================= */
-
 const SUPABASE_URL =
 "https://zobsoaasyuqtqniwfcyd.supabase.co";
 
@@ -227,7 +222,7 @@ const SHOP_ID = 1;
 
 
 /* =========================
-   اتصال Supabase
+   Supabase Request
 ========================= */
 
 async function supabaseRequest(path, options = {}){
@@ -287,7 +282,7 @@ async function supabaseRequest(path, options = {}){
 
 
 /* =========================
-   تحميل الزبائن
+   الزبائن
 ========================= */
 
 async function render(){
@@ -327,7 +322,7 @@ async function render(){
       .textContent = total;
 
 
-    if(customers.length === 0){
+    if(!customers.length){
 
       list.innerHTML =
         "لا يوجد زبائن حالياً";
@@ -383,7 +378,7 @@ async function render(){
 
 
 /* =========================
-   تحميل سجل العمليات
+   سجل العمليات
 ========================= */
 
 async function loadHistory(){
@@ -397,7 +392,7 @@ async function loadHistory(){
     const rows =
       await supabaseRequest(
         "points_history" +
-        "?select=id,created_at,customer_name,customer_phone,points,action" +
+        "?select=id,created_at,customer_id,customer_name,customer_phone,points,action" +
         "&shop_id=eq." + SHOP_ID +
         "&order=id.desc" +
         "&limit=20"
@@ -435,20 +430,22 @@ async function loadHistory(){
 
             <strong>
               ${escapeHtml(
-                row.customer_name || ""
+                row.customer_name || "بدون اسم"
               )}
             </strong>
 
             <div class="muted">
               ${escapeHtml(
-                row.customer_phone || ""
+                row.customer_phone || "بدون رقم"
               )}
             </div>
 
             <div>
               ${actionText}:
               <b>
-                ${sign}${Number(row.points || 0)}
+                ${sign}${Number(
+                  row.points || 0
+                )}
               </b>
               نقطة
             </div>
@@ -474,30 +471,32 @@ async function loadHistory(){
 
 
 /* =========================
-   إضافة / خصم النقاط
+   إضافة / خصم
 ========================= */
 
 async function changePoints(direction){
 
-  const name =
-    document.getElementById("name")
-      .value.trim();
+  const nameInput =
+    document.getElementById("name");
 
+  const phoneInput =
+    document.getElementById("phone");
 
-  const phone =
-    document.getElementById("phone")
-      .value.trim();
-
-
-  const value =
-    Number(
-      document.getElementById("points")
-        .value
-    );
-
+  const pointsInput =
+    document.getElementById("points");
 
   const status =
     document.getElementById("status");
+
+
+  const name =
+    nameInput.value.trim();
+
+  const phone =
+    phoneInput.value.trim();
+
+  const value =
+    Number(pointsInput.value);
 
 
   if(
@@ -521,7 +520,9 @@ async function changePoints(direction){
 
   try{
 
-    /* البحث عن الزبون */
+    /* =========================
+       البحث عن الزبون
+    ========================= */
 
     const found =
       await supabaseRequest(
@@ -573,12 +574,23 @@ async function changePoints(direction){
           },
 
           body:JSON.stringify({
-            name:name,
+
+            name:customer.name,
+
+            phone:customer.phone,
+
             points:newPoints
+
           })
         }
       );
 
+
+      /*
+        مهم:
+        نأخذ الاسم والرقم من قاعدة البيانات
+        وليس من الخانات.
+      */
 
       customer.points =
         newPoints;
@@ -635,7 +647,18 @@ async function changePoints(direction){
 
 
     /* =========================
-       تسجيل العملية
+       اسم ورقم مضمونين
+    ========================= */
+
+    const historyName =
+      customer.name || name;
+
+    const historyPhone =
+      customer.phone || phone;
+
+
+    /* =========================
+       حفظ سجل العملية
     ========================= */
 
     await supabaseRequest(
@@ -652,9 +675,14 @@ async function changePoints(direction){
 
           shop_id:SHOP_ID,
 
-          customer_name:name,
+          customer_id:
+            customer.id,
 
-          customer_phone:phone,
+          customer_name:
+            historyName,
+
+          customer_phone:
+            historyPhone,
 
           points:value,
 
@@ -668,16 +696,13 @@ async function changePoints(direction){
     );
 
 
-    /* نجاح */
-
     status.textContent =
       direction === 1
         ? "✅ تمت إضافة النقاط وحفظ العملية"
         : "✅ تم خصم النقاط وحفظ العملية";
 
 
-    document.getElementById("points")
-      .value = "";
+    pointsInput.value = "";
 
 
     await render();
@@ -737,7 +762,7 @@ function escapeHtml(value){
 
 
 /* =========================
-   تشغيل الصفحة
+   تشغيل
 ========================= */
 
 async function start(){
