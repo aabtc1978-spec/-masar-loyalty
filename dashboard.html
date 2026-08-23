@@ -1240,31 +1240,33 @@ async function changePoints(
     catch(historyError){
 
       console.error(
+        "HISTORY INSERT ERROR:",
         historyError
       );
 
-
       /*
-         الزبون تم تحديثه،
-         لكن سجل العملية فشل.
+         فحص مؤقت:
+         نعرض خطأ Supabase الحقيقي حتى نعرف
+         لماذا لم تدخل العملية إلى points_history.
       */
 
       showStatus(
-        "تم تحديث رصيد الزبون، " +
-        "لكن تعذر تسجيل العملية في السجل.\n\n" +
+        "النقاط انضافت للزبون، لكن حفظ السجل فشل.\\n\\n" +
+        "خطأ السجل:\\n" +
         historyError.message,
         true
       );
 
+      alert(
+        "HISTORY ERROR:\\n\\n" +
+        historyError.message
+      );
 
       await loadCustomers();
-
       await loadHistory();
-
       return;
 
     }
-
 
     /* =================================================
        رسالة النجاح
