@@ -1,13 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>مسار | لوحة صاحب المحل</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسار | لوحة التحكم</title>
 
 <style>
 body{
@@ -16,86 +12,81 @@ body{
   color:#202124;
   font-family:Arial,sans-serif;
 }
-
 .wrap{
-  max-width:900px;
+  max-width:1000px;
   margin:auto;
   padding:20px;
 }
-
-h1{
-  margin:0 0 20px;
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
 }
-
+h1{
+  margin:0;
+}
 .grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:12px;
+  gap:15px;
 }
-
 .card{
   background:white;
-  border-radius:12px;
-  padding:18px;
+  padding:20px;
+  border-radius:14px;
   margin-bottom:15px;
   box-shadow:0 2px 8px #ddd;
 }
-
 .num{
-  font-size:30px;
+  font-size:32px;
   font-weight:bold;
   margin-top:8px;
 }
-
 input,button{
   width:100%;
   box-sizing:border-box;
-  padding:12px;
-  margin-top:8px;
+  padding:13px;
+  margin-top:10px;
   border-radius:8px;
-  border:1px solid #ddd;
   font-size:16px;
 }
-
+input{
+  border:1px solid #ccc;
+}
 button{
   border:0;
-  background:#111;
+  background:#333;
   color:white;
   cursor:pointer;
 }
-
-button.add{
-  background:#198754;
-}
-
-button.minus{
-  background:#dc3545;
-}
-
 .row{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
-
 .customer{
-  background:#fafafa;
-  padding:12px;
-  border-radius:8px;
-  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-top:1px solid #eee;
+  padding:14px 0;
 }
-
 .muted{
   color:#777;
 }
-
+.status{
+  margin-top:10px;
+  padding:10px;
+  border-radius:8px;
+  background:#f1f1f1;
+}
 @media(max-width:650px){
   .grid{
     grid-template-columns:1fr;
   }
-
-  .row{
-    grid-template-columns:1fr;
+  .top{
+    display:block;
   }
 }
 </style>
@@ -105,130 +96,155 @@ button.minus{
 
 <div class="wrap">
 
-<h1>محل مسار التجريبي</h1>
+  <div class="top">
+    <div class="muted">مسار • لوحة التحكم</div>
+    <h1>محل مسار التجريبي</h1>
+  </div>
 
-<div class="grid">
+  <div class="grid">
 
-<div class="card">
-<div class="muted">عدد الزبائن</div>
-<div class="num" id="count">0</div>
-</div>
+    <div class="card">
+      <div class="muted">عدد الزبائن</div>
+      <div class="num" id="count">0</div>
+    </div>
 
-<div class="card">
-<div class="muted">إجمالي النقاط</div>
-<div class="num" id="total">0</div>
-</div>
+    <div class="card">
+      <div class="muted">إجمالي النقاط</div>
+      <div class="num" id="total">0</div>
+    </div>
 
-<div class="card">
-<div class="muted">المكافأة القادمة</div>
-<div class="num">100</div>
-</div>
+    <div class="card">
+      <div class="muted">المكافأة القادمة</div>
+      <div class="num">100</div>
+    </div>
 
-</div>
+  </div>
 
-<div class="card">
+  <div class="card">
 
-<h2>إضافة / تحديث نقاط زبون</h2>
+    <h2>إضافة زبون / تحديث نقاط</h2>
 
-<input id="name" placeholder="اسم الزبون">
+    <input id="name" placeholder="اسم الزبون">
 
-<input id="phone" placeholder="رقم الهاتف">
+    <input id="phone" placeholder="رقم الهاتف">
 
-<input id="points" type="number" placeholder="عدد النقاط">
+    <input id="points" type="number" placeholder="عدد النقاط">
 
-<div class="row">
+    <div class="row">
+      <button onclick="changePoints(1)">إضافة نقاط</button>
+      <button onclick="changePoints(-1)">خصم نقاط</button>
+    </div>
 
-<button class="add" onclick="changePoints(1)">
-إضافة نقاط
-</button>
+    <div id="status" class="status">جاهز</div>
 
-<button class="minus" onclick="changePoints(-1)">
-خصم نقاط
-</button>
+  </div>
 
-</div>
+  <div class="card">
 
-</div>
+    <h2>الزبائن</h2>
 
-<div class="card">
+    <div id="list">
+      جارِ التحميل...
+    </div>
 
-<h2>الزبائن</h2>
-
-<div id="list">جاري التحميل...</div>
-
-</div>
+  </div>
 
 </div>
 
 <script>
 
 const SUPABASE_URL =
-"https://zobsoaasyuqtqniwfcy d.supabase.co".replace(" ","");
+"https://zobsoaasyuqtqniwfcyd.supabase.co";
 
 const SUPABASE_KEY =
-"ضع_هنا_مفتاح_Supabase_الخاص_بك";
+"sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const TABLE = "customers";
 
 
-/* تحميل الزبائن */
+async function getCustomers(){
 
-async function loadCustomers(){
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/" +
+    TABLE +
+    "?select=id,name,phone,points,created_at&order=id.desc",
+    {
+      method:"GET",
+      headers:{
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer " + SUPABASE_KEY
+      }
+    }
+  );
 
-  const { data, error } = await db
-    .from("customers")
-    .select("*")
-    .order("id", { ascending:false });
+  if(!response.ok){
 
-  if(error){
+    const errorText = await response.text();
+
+    throw new Error(errorText || "فشل تحميل الزبائن");
+  }
+
+  return await response.json();
+}
+
+
+async function render(){
+
+  try{
+
+    const customers = await getCustomers();
+
+    document.getElementById("count").textContent =
+      customers.length;
+
+    let total = 0;
+
+    customers.forEach(c=>{
+      total += Number(c.points || 0);
+    });
+
+    document.getElementById("total").textContent = total;
+
+    const list = document.getElementById("list");
+
+    if(customers.length === 0){
+
+      list.innerHTML =
+        '<div class="muted">لا يوجد زبائن حالياً</div>';
+
+      return;
+    }
+
+    list.innerHTML = customers.map(c => `
+
+      <div class="customer">
+
+        <div>
+          <b>${escapeHtml(c.name || "")}</b>
+          <div class="muted">${escapeHtml(c.phone || "")}</div>
+        </div>
+
+        <div>
+          <b>${Number(c.points || 0)}</b> نقطة
+        </div>
+
+      </div>
+
+    `).join("");
+
+  }catch(error){
 
     console.error(error);
 
     document.getElementById("list").innerHTML =
+      "<div class='muted'>تعذر تحميل البيانات</div>";
+
+    document.getElementById("status").textContent =
       "خطأ: " + error.message;
-
-    return;
   }
-
-  let customers = data || [];
-
-  document.getElementById("count").textContent =
-    customers.length;
-
-  let total = customers.reduce(
-    (sum,c) => sum + Number(c.points || 0),
-    0
-  );
-
-  document.getElementById("total").textContent =
-    total;
-
-  if(customers.length === 0){
-
-    document.getElementById("list").innerHTML =
-      "لا يوجد زبائن حتى الآن";
-
-    return;
-  }
-
-  document.getElementById("list").innerHTML =
-    customers.map(c => `
-      <div class="customer">
-        <b>${escapeHtml(c.name || "")}</b>
-        <br>
-        📱 ${escapeHtml(c.phone || "")}
-        <br>
-        ⭐ النقاط:
-        <b>${Number(c.points || 0)}</b>
-      </div>
-    `).join("");
 }
 
-
-/* إضافة أو خصم النقاط */
 
 async function changePoints(direction){
 
@@ -241,128 +257,130 @@ async function changePoints(direction){
   const points =
     Number(document.getElementById("points").value);
 
-  if(!name || !phone || !points){
+  const status =
+    document.getElementById("status");
 
-    alert("ادخل الاسم والرقم والنقاط");
 
-    return;
-  }
+  if(!name || !phone || !points || points <= 0){
 
-  if(points <= 0){
-
-    alert("عدد النقاط يجب أن يكون أكبر من صفر");
+    status.textContent =
+      "أدخل الاسم ورقم الهاتف والنقاط";
 
     return;
   }
 
 
-  /* البحث عن الزبون */
-
-  const { data: existing, error: findError } =
-    await db
-      .from("customers")
-      .select("*")
-      .eq("phone", phone)
-      .maybeSingle();
+  status.textContent =
+    "جارِ الحفظ...";
 
 
-  if(findError){
+  try{
 
-    alert("خطأ في البحث: " + findError.message);
+    // البحث عن الزبون بواسطة رقم الهاتف
+    const searchResponse = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/" +
+      TABLE +
+      "?select=id,name,phone,points&phone=eq." +
+      encodeURIComponent(phone),
+      {
+        method:"GET",
+        headers:{
+          "apikey":SUPABASE_KEY,
+          "Authorization":"Bearer " + SUPABASE_KEY
+        }
+      }
+    );
 
-    console.error(findError);
 
-    return;
-  }
+    if(!searchResponse.ok){
 
-
-  /* إذا الزبون موجود */
-
-  if(existing){
-
-    let newPoints =
-      Number(existing.points || 0) +
-      (direction * points);
-
-    if(newPoints < 0){
-      newPoints = 0;
+      throw new Error(
+        await searchResponse.text()
+      );
     }
 
-    const { error } =
-      await db
-        .from("customers")
-        .update({
-          name:name,
-          points:newPoints
-        })
-        .eq("id", existing.id);
+
+    const found =
+      await searchResponse.json();
 
 
-    if(error){
+    if(found.length === 0){
 
-      alert("فشل تحديث النقاط: " + error.message);
-
-      console.error(error);
-
-      return;
-    }
-
-  }
-
-  /* إذا الزبون غير موجود */
-
-  else{
-
-    let newPoints =
-      direction === 1 ? points : 0;
-
-    const { error } =
-      await db
-        .from("customers")
-        .insert({
-          name:name,
-          phone:phone,
-          points:newPoints
-        });
+      // إنشاء زبون جديد
+      const newPoints =
+        direction === 1 ? points : 0;
 
 
-    if(error){
+      const insertResponse = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/" +
+        TABLE,
+        {
+          method:"POST",
 
-      alert("فشل إضافة الزبون: " + error.message);
+          headers:{
+            "apikey":SUPABASE_KEY,
+            "Authorization":"Bearer " + SUPABASE_KEY,
+            "Content-Type":"application/json",
+            "Prefer":"return=representation"
+          },
 
-      console.error(error);
-
-      return;
-    }
-  }
-
-
-  document.getElementById("points").value = "";
-
-  alert("تم حفظ النقاط بنجاح ✅");
-
-  loadCustomers();
-}
-
-
-/* حماية عرض الاسم */
-
-function escapeHtml(text){
-
-  return String(text)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
+          body:JSON.stringify({
+            name:name,
+            phone:phone,
+            points:newPoints
+          })
+        }
+      );
 
 
-/* تشغيل أول مرة */
+      if(!insertResponse.ok){
 
-loadCustomers();
+        throw new Error(
+          await insertResponse.text()
+        );
+      }
 
-</script>
 
-</body>
-</html>
+    }else{
+
+      // تحديث زبون موجود
+      const customer = found[0];
+
+      const oldPoints =
+        Number(customer.points || 0);
+
+      const newPoints =
+        Math.max(
+          0,
+          oldPoints + (direction * points)
+        );
+
+
+      const updateResponse = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/" +
+        TABLE +
+        "?id=eq." +
+        customer.id,
+        {
+          method:"PATCH",
+
+          headers:{
+            "apikey":SUPABASE_KEY,
+            "Authorization":"Bearer " + SUPABASE_KEY,
+            "Content-Type":"application/json",
+            "Prefer":"return=representation"
+          },
+
+          body:JSON.stringify({
+            name:name,
+            phone:phone,
+            points:newPoints
+          })
+        }
+      );
+
+
+      if(!updateResponse.ok){
