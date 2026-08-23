@@ -36,6 +36,7 @@ const SUPABASE_KEY ="sb_publishable_nYrJznGU551mw5fMvr6oZA_AySYi2E7;
   SUPABASE_URL,
   SUPABASE_KEY
 );
+  const customers = JSON.parse(localStorage.getItem("masar_customers") || "{}");
   function render(){let a=Object.entries(customers);count.textContent=a.length;total.textContent=a.reduce((s,[,c])=>s+c.points,0);list.innerHTML=a.length?a.map(([p,c])=>`<div class="customer"><span><b>${c.name}</b><br><small>${p}</small></span><b>${c.points} نقطة</b></div>`).join(''):'<div class="muted">لا يوجد زبائن بعد.</div>'}
 function change(dir){
   let n = name.value.trim();
