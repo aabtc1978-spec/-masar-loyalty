@@ -971,10 +971,13 @@ async function addHistory(
           customerPhone,
 
         points:
-          points,
+          Number(points),
 
         action:
-          action
+          action,
+
+        created_at:
+          new Date().toISOString()
 
       })
 
