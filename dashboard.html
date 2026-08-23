@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مسار | لوحة صاحب المحل</title>
+<style>
+body{margin:0;background:#f5f6fa;color:#202124;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:20px}
+.top{display:flex;justify-content:space-between;align-items:center}.muted{color:#777;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 3px 16px #0000000d}
+.num{font-size:30px;font-weight:700;margin-top:8px}input,button{width:100%;padding:12px;border-radius:10px;margin-top:9px;font-size:15px;box-sizing:border-box}
+input{border:1px solid #ddd}button{border:0;background:#111;color:#fff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.customer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eee;padding:12px 0}.badge{padding:5px 9px;border-radius:20px;background:#eee}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><div class="muted">مسار • لوحة التحكم</div><h1>محل مسار التجريبي</h1></div><div class="badge">تجريبي</div></div>
+<div class="grid">
+<div class="card"><div class="muted">عدد الزبائن</div><div class="num" id="count">0</div></div>
+<div class="card"><div class="muted">إجمالي النقاط</div><div class="num" id="total">0</div></div>
+<div class="card"><div class="muted">المكافأة القادمة</div><div class="num">100</div></div>
+</div>
+<div class="card"><h2>إضافة زبون / تحديث نقاط</h2>
+<input id="name" placeholder="اسم الزبون"><input id="phone" placeholder="رقم الهاتف"><input id="points" type="number" placeholder="عدد النقاط">
+<div class="row"><button onclick="change(1)">إضافة نقاط</button><button onclick="change(-1)">خصم نقاط</button></div></div>
+<div class="card"><h2>الزبائن</h2><div id="list"></div></div>
+<div class="card"><h2>المكافآت</h2><div class="customer"><span>خصم 10%</span><b>100 نقطة</b></div><div class="customer"><span>هدية مجانية</span><b>200 نقطة</b></div></div>
+</div>
+<script>
+let customers=JSON.parse(localStorage.getItem('masar_customers')||'{}');
+function render(){let a=Object.entries(customers);count.textContent=a.length;total.textContent=a.reduce((s,[,c])=>s+c.points,0);list.innerHTML=a.length?a.map(([p,c])=>`<div class="customer"><span><b>${c.name}</b><br><small>${p}</small></span><b>${c.points} نقطة</b></div>`).join(''):'<div class="muted">لا يوجد زبائن بعد.</div>'}
+function change(dir){let n=name.value.trim(),p=phone.value.trim(),v=Number(points.value);if(!n||!p||!v){alert('أدخل الاسم والرقم والنقاط');return}if(!customers[p])customers[p]={name:n,points:0};customers[p].name=n;customers[p].points=Math.max(0,customers[p].points+dir*v);localStorage.setItem('masar_customers',JSON.stringify(customers));points.value='';render()}
+render();
+</script>
+</body>
+</html>
