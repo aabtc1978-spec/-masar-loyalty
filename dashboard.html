@@ -274,16 +274,63 @@ button.red{
 
     </div>
 
-    <div class="badge">
-      Supabase
+    <div
+      class="badge"
+      id="modeBadge"
+    >
+      صفحة الزبون
     </div>
+
+  </div>
+
+
+  <!-- تسجيل الزبون -->
+
+  <div
+    class="card"
+    id="customerRegistration"
+    style="display:none"
+  >
+
+    <h2>
+      📝 تسجيل الزبون
+    </h2>
+
+    <p class="muted">
+      سجّل بياناتك في هذا المحل.
+    </p>
+
+    <input
+      id="registerName"
+      type="text"
+      placeholder="اسم الزبون"
+    >
+
+    <input
+      id="registerPhone"
+      type="text"
+      placeholder="رقم الهاتف"
+      inputmode="tel"
+    >
+
+    <button
+      class="green"
+      onclick="registerCustomer()"
+    >
+      تسجيل
+    </button>
+
+    <div
+      id="registerStatus"
+      class="status"
+    ></div>
 
   </div>
 
 
   <!-- الإحصائيات -->
 
-  <div class="grid">
+  <div class="grid owner-only">
 
     <div class="card">
 
@@ -328,7 +375,7 @@ button.red{
 
   <!-- البحث -->
 
-  <div class="card">
+  <div class="card owner-only">
 
     <h2>
       🔎 البحث عن زبون سابق
@@ -348,7 +395,7 @@ button.red{
 
   <!-- إضافة وخصم -->
 
-  <div class="card">
+  <div class="card owner-only">
 
     <h2>
       إضافة زبون / تحديث النقاط
@@ -402,7 +449,7 @@ button.red{
 
   <!-- قائمة الزبائن -->
 
-  <div class="card">
+  <div class="card owner-only">
 
     <h2>
       الزبائن
@@ -420,7 +467,7 @@ button.red{
 
   <!-- سجل النقاط -->
 
-  <div class="card">
+  <div class="card owner-only">
 
     <h2>
       🧾 سجل النقاط
@@ -438,7 +485,7 @@ button.red{
 
   <!-- المكافآت -->
 
-  <div class="card">
+  <div class="card owner-only">
 
     <h2>
       المكافآت
@@ -493,7 +540,10 @@ const params = new URLSearchParams(window.location.search);
 const SHOP_CODE =
   params.get("shop") || "masar001";
 
-let SHOP_ID = 1;
+const APP_MODE =
+  params.get("mode") || "customer";
+
+let SHOP_ID = null;
 
 
 /* =====================================================
@@ -608,6 +658,137 @@ async function supabaseRequest(
 /* =====================================================
    تحميل الزبائن
 ===================================================== */
+
+
+async function initShop(){
+
+  const shops =
+    await supabaseRequest(
+      "shops" +
+      "?shop_code=eq." +
+      encodeURIComponent(SHOP_CODE) +
+      "&select=id,name,shop_code,active" +
+      "&limit=1"
+    );
+
+  if(
+    !Array.isArray(shops) ||
+    shops.length === 0
+  ){
+    throw new Error(
+      "لم يتم العثور على هذا المحل: " +
+      SHOP_CODE
+    );
+  }
+
+  const shop = shops[0];
+
+  if(shop.active === false){
+    throw new Error("هذا المحل غير مفعل حاليًا.");
+  }
+
+  SHOP_ID = Number(shop.id);
+
+  const title = document.querySelector("h1");
+
+  if(title){
+    title.textContent =
+      shop.name || "محل مسار";
+  }
+}
+
+
+async function registerCustomer(){
+
+  const nameInput =
+    document.getElementById("registerName");
+
+  const phoneInput =
+    document.getElementById("registerPhone");
+
+  const status =
+    document.getElementById("registerStatus");
+
+  const name =
+    nameInput.value.trim();
+
+  const phone =
+    phoneInput.value.trim();
+
+  if(!name || !phone){
+
+    status.textContent =
+      "اكتب الاسم ورقم الهاتف.";
+
+    status.className =
+      "status error";
+
+    return;
+  }
+
+  try{
+
+    const existing =
+      await supabaseRequest(
+        "customers" +
+        "?shop_id=eq." +
+        SHOP_ID +
+        "&phone=eq." +
+        encodeURIComponent(phone) +
+        "&select=id,points" +
+        "&limit=1"
+      );
+
+    if(
+      Array.isArray(existing) &&
+      existing.length > 0
+    ){
+
+      status.textContent =
+        "هذا الرقم مسجل مسبقًا. رصيدك الحالي: " +
+        Number(existing[0].points || 0) +
+        " نقطة.";
+
+      status.className =
+        "status ok";
+
+      return;
+    }
+
+    await supabaseRequest(
+      "customers",
+      {
+        method:"POST",
+        body:JSON.stringify({
+          shop_id:SHOP_ID,
+          name:name,
+          phone:phone,
+          points:0
+        })
+      }
+    );
+
+    status.textContent =
+      "تم التسجيل بنجاح. رصيدك الحالي: 0 نقطة.";
+
+    status.className =
+      "status ok";
+
+    nameInput.value = "";
+    phoneInput.value = "";
+
+  }
+  catch(error){
+
+    status.textContent =
+      "تعذر التسجيل:\n\n" +
+      error.message;
+
+    status.className =
+      "status error";
+  }
+}
+
 
 async function loadCustomers(){
 
@@ -1691,11 +1872,77 @@ function escapeHtml(value){
 /* =====================================================
    تشغيل الصفحة
 ===================================================== */
+async function startApp(){
 
-loadCustomers();
+  try{
 
-loadHistory();
+    await initShop();
 
+    const owner =
+      APP_MODE === "owner";
+
+    document
+      .querySelectorAll(".owner-only")
+      .forEach(
+        element => {
+          element.style.display =
+            owner ? "" : "none";
+        }
+      );
+
+    const registration =
+      document.getElementById(
+        "customerRegistration"
+      );
+
+    if(registration){
+
+      registration.style.display =
+        owner ? "none" : "block";
+    }
+
+    const badge =
+      document.getElementById(
+        "modeBadge"
+      );
+
+    if(badge){
+
+      badge.textContent =
+        owner
+        ? "لوحة صاحب المحل"
+        : "تسجيل الزبون";
+    }
+
+    if(owner){
+
+      await loadCustomers();
+      await loadHistory();
+    }
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    const status =
+      document.getElementById(
+        "registerStatus"
+      );
+
+    if(status){
+
+      status.textContent =
+        "تعذر فتح رابط المحل:\n\n" +
+        error.message;
+
+      status.className =
+        "status error";
+    }
+  }
+}
+
+startApp();
 </script>
 
 </body>
