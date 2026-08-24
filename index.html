@@ -11,34 +11,117 @@ body{font-family:Arial,sans-serif;background:#f5f6fa;margin:0;color:#222}
 h1{margin:8px 0}.points{font-size:42px;font-weight:700;margin:8px 0}
 input,button{width:100%;padding:13px;border-radius:10px;box-sizing:border-box;margin-top:10px}
 input{border:1px solid #ddd}button{border:0;background:#111;color:white;font-size:16px}
+.owner-only{display:none}
+body.owner-mode .customer-only{display:none}
+body.owner-mode .owner-only{display:block}
 .small{color:#777;font-size:13px}.reward{display:flex;justify-content:space-between;border:1px solid #eee;padding:12px;border-radius:12px;margin-top:10px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card">
-    <div class="small">مسار • نظام الولاء</div>
-    <h1>محل مسار التجريبي</h1>
-    <div class="small">أدخل رقم هاتفك لمشاهدة نقاطك</div>
-    <input id="phone" placeholder="رقم الهاتف">
-    <button onclick="showPoints()">عرض نقاطي</button>
+
+  <!-- صفحة الزبون: نفس الصفحة الأصلية -->
+  <div class="customer-only">
+    <div class="card">
+      <div class="small">مسار • نظام الولاء</div>
+      <h1 id="customerShopName">محل مسار التجريبي</h1>
+      <div class="small">أدخل رقم هاتفك لمشاهدة نقاطك</div>
+      <input id="phone" placeholder="رقم الهاتف">
+      <button onclick="showPoints()">عرض نقاطي</button>
+    </div>
+
+    <div id="result" class="card" style="display:none">
+      <div class="small">رصيد النقاط</div>
+      <div class="points" id="points">75</div>
+      <div class="small">نقطة</div>
+      <hr>
+      <h3>المكافآت</h3>
+      <div class="reward"><span>خصم 10%</span><b>100 نقطة</b></div>
+      <div class="reward"><span>هدية مجانية</span><b>200 نقطة</b></div>
+    </div>
   </div>
 
-  <div id="result" class="card" style="display:none">
-    <div class="small">رصيد النقاط</div>
-    <div class="points" id="points">75</div>
-    <div class="small">نقطة</div>
-    <hr>
-    <h3>المكافآت</h3>
-    <div class="reward"><span>خصم 10%</span><b>100 نقطة</b></div>
-    <div class="reward"><span>هدية مجانية</span><b>200 نقطة</b></div>
+  <!-- لوحة صاحب المحل -->
+  <div class="owner-only">
+    <div class="card">
+      <div class="small">مسار • نظام الولاء</div>
+      <h1>لوحة صاحب المحل</h1>
+      <div class="small">رمز المحل: <b id="shopCode">masar001</b></div>
+    </div>
+
+    <div class="card">
+      <h3>إضافة أو خصم نقاط</h3>
+      <input id="ownerPhone" placeholder="رقم هاتف الزبون">
+      <input id="ownerPoints" type="number" min="1" placeholder="عدد النقاط">
+      <button onclick="addPoints()">إضافة نقاط</button>
+      <button onclick="subtractPoints()">خصم نقاط</button>
+      <div id="ownerMessage" class="small"></div>
+    </div>
+
+    <div class="card">
+      <h3>رابط الزبون</h3>
+      <div class="small" id="customerLink"></div>
+    </div>
   </div>
+
 </div>
+
 <script>
+const params = new URLSearchParams(window.location.search);
+const SHOP_CODE = params.get("shop") || "masar001";
+const MODE = params.get("mode") || "customer";
+
+if (MODE === "owner") {
+  document.body.classList.add("owner-mode");
+}
+
+document.getElementById("shopCode").textContent = SHOP_CODE;
+
+const customerUrl =
+  window.location.origin +
+  window.location.pathname +
+  "?shop=" +
+  encodeURIComponent(SHOP_CODE) +
+  "&mode=customer";
+
+document.getElementById("customerLink").textContent = customerUrl;
+
 function showPoints(){
   const p=document.getElementById('phone').value.trim();
   if(!p){alert('اكتب رقم الهاتف');return;}
   document.getElementById('result').style.display='block';
+}
+
+/*
+  ملاحظة:
+  هذه النسخة تحل فصل رابط صاحب المحل عن رابط الزبون.
+  حفظ النقاط في Supabase نربطه بالجدول الحالي بعد التأكد
+  أن وضع owner يفتح بشكل صحيح، حتى لا نغيّر نظامك الحالي.
+*/
+function addPoints(){
+  const phone=document.getElementById("ownerPhone").value.trim();
+  const points=Number(document.getElementById("ownerPoints").value);
+  const msg=document.getElementById("ownerMessage");
+
+  if(!phone || !points || points < 1){
+    msg.textContent="اكتب رقم الزبون وعدد النقاط.";
+    return;
+  }
+
+  msg.textContent="تم تسجيل طلب إضافة " + points + " نقطة للرقم " + phone + ".";
+}
+
+function subtractPoints(){
+  const phone=document.getElementById("ownerPhone").value.trim();
+  const points=Number(document.getElementById("ownerPoints").value);
+  const msg=document.getElementById("ownerMessage");
+
+  if(!phone || !points || points < 1){
+    msg.textContent="اكتب رقم الزبون وعدد النقاط.";
+    return;
+  }
+
+  msg.textContent="تم تسجيل طلب خصم " + points + " نقطة من الرقم " + phone + ".";
 }
 </script>
 </body>
